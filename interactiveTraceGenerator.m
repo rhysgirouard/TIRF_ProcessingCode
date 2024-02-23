@@ -23,9 +23,14 @@ set(fig1, 'KeyPressFcn', @(src, event) updatePlot(src, event, hsl, avg_intensity
 disp('finishing and saving')
 figFilePath = fullfile(folderPath, 'interactiveFig');
 savefig(figFilePath)
-stepIDs = data.pressedNums;
+
+
+NumberOfSteps = transpose(data.pressedNums);
 stepIDFilePath = fullfile(folderPath, 'stepIDs.csv');
-writematrix(stepIDs, stepIDFilePath)
+TraceNumber = (1:length(NumberOfSteps)).';
+stepIDTable = table(TraceNumber, NumberOfSteps);
+writetable(stepIDTable, stepIDFilePath)
+
 close
 end
 
@@ -72,9 +77,11 @@ function updatePlot(src, event, sliderHandle, datapoints, folderPath)
             disp('closing and saving')
             figFilePath = fullfile(folderPath, 'interactiveFig');
             savefig(figFilePath)
-            stepIDs = data.pressedNums;
+            NumberOfSteps = transpose(data.pressedNums);
             stepIDFilePath = fullfile(folderPath, 'stepIDs.csv');
-            writematrix(stepIDs, stepIDFilePath)
+            TraceNumber = (1:length(NumberOfSteps)).';
+            stepIDTable = table(TraceNumber, NumberOfSteps);
+            writetable(stepIDTable, stepIDFilePath)
             close
         otherwise
             disp('Unrecognized input')
@@ -86,9 +93,9 @@ function plotWithText(yVals, traceNum, txt)
     hold on;
     xL=xlim;
     yL=ylim;
-    title(traceNum)
+    title(['Trace #', num2str(traceNum)])
     % Set the position where you want to place the text
-    text(0.99*xL(2),0.99*yL(2), txt, 'HorizontalAlignment','right',...
-        'VerticalAlignment','top', 'FontSize', 40, 'Color', [1, 0, 0, 0])
+    text(0.99*xL(2),0.99*yL(2), ['Steps:', txt], 'HorizontalAlignment','right',...
+        'VerticalAlignment','top', 'FontSize', 30, 'Color', [1, 0, 0, 0])
     hold off
 end

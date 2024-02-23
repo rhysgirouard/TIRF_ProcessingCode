@@ -13,12 +13,15 @@ function tallySum(sampleFolderPath)
 
     % Loop through each subfolder and pass its file path to the external function
     for i = 1:numel(subfolderNames)
-    subfolderPath = fullfile(sampleFolderPath, subfolderNames(i));
-    csvFilePath = fullfile(subfolderPath, "stepIDs.csv");
-    csvFilePathChar = convertStringsToChars(csvFilePath);
-    sum = sum + csvTallyFxn(csvFilePathChar);
+        subfolderPath = fullfile(sampleFolderPath, subfolderNames(i));
+        csvFilePath = fullfile(subfolderPath, "stepIDs.csv");
+        csvFilePathChar = convertStringsToChars(csvFilePath);
+        sum = sum + csvTallyFxn(csvFilePathChar);
     end
-    writematrix(sum,fullfile(sampleFolderPath, 'sumOfCounts.csv'))
+    columnTitles = [{'Uncounted'}, {'One Step'}, {'Two Steps'}, {'Three Steps'}, {'Four Steps'}, {'Five Steps'}, {'Six Steps'}, {'Seven Steps'}, {'Eight Steps'}, {'Nine Steps'}];
+    sumAsCell = num2cell(sum);
+    result = [columnTitles;sumAsCell];
+    writecell(result,fullfile(sampleFolderPath, 'sumOfCounts.csv'))
 
 end
 
@@ -27,7 +30,9 @@ function digitCounts = csvTallyFxn(csvFilePath)
     % Specify the path to your CSV file
 
 % Read the CSV file
-data = readmatrix(csvFilePath);
+
+fullData = readtable(csvFilePath);
+data = fullData.NumberOfSteps;
 
 % Extract all the digits from the data
 digitCounts = histcounts(data, 0:10);
