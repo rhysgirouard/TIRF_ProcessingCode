@@ -4,21 +4,24 @@ function [] = tracePlotterOirginalFig(tifFolderPath)
 %   statistics csv and a OriginalSatack.mat files then it plots the
 %   intensity over time graphs for each identified spot and saves them to a
 %   single figure called Figure1
+
+
 nCrop = 400;
 mCrop = 400;
+nImage = 512;
+mImage = 512;
+NumberImages = 1500;
 
 %Check folder has all necessary contents:
 contents = dir(tifFolderPath);
 fileNames = {contents.name};
+
 if ~ismember(fileNames, 'Track statistics.csv')
     error('There is no Track statistics.csv file')
 end
 if ~ismember(fileNames, 'OriginalStack.mat')
     error('ERROR: No existing Stack file!')
 else
-    nImage = 512;
-    mImage = 512;
-    NumberImages = 1500;
     % Specify the path to the saved .mat file
     savedFilePath = fullfile(tifFolderPath, 'OriginalStack.mat');
     
@@ -30,9 +33,7 @@ else
     
 end
 
-%MIGHT BE ABLE TO DELETE THIS 
-addpath('/Users/rhysg/Documents/YalePGRA/step detection codes')
-savepath
+
 
 tracks_file = fullfile(tifFolderPath,'Track statistics.csv');
 [tracks_data, tracks_result]= readtext(tracks_file, '[,\t]', '=', '[]', 'numeric-empty2zero');

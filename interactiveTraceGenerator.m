@@ -51,16 +51,30 @@ function updatePlot(src, event, sliderHandle, datapoints, folderPath)
 
     % Check which key was pressed
     switch keyPressed
+        % IF a number is presssed record it and move to the next trace
         case {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}
             data.pressedNums(1,sliderValue) = str2double(keyPressed);
             guidata(src,data)
             if sliderValue < max
                 sliderHandle.Value = sliderValue+1;
-                txt = num2str(data.pressedNums(1,sliderHandle.Value));
-                plotWithText(datapoints(:, sliderHandle.Value), sliderHandle.Value, txt);
             end
+            txt = num2str(data.pressedNums(1,sliderHandle.Value));
+            plotWithText(datapoints(:, sliderHandle.Value), sliderHandle.Value, txt);
+        % When you want to zoom in on the start of the graph use a, s, d, f
+        % for the range 1:100, 1:200, 1:300, all respectively
         case {'a'}
-            disp('a pressed')
+            txt = num2str(data.pressedNums(1,sliderHandle.Value));
+            plotWithText(datapoints(1:100, sliderHandle.Value), sliderHandle.Value, txt);
+        case {'s'}
+            txt = num2str(data.pressedNums(1,sliderHandle.Value));
+            plotWithText(datapoints(1:200, sliderHandle.Value), sliderHandle.Value, txt);
+        case {'d'}
+            txt = num2str(data.pressedNums(1,sliderHandle.Value));
+            plotWithText(datapoints(1:300, sliderHandle.Value), sliderHandle.Value, txt);
+        case {'f'}
+            txt = num2str(data.pressedNums(1,sliderHandle.Value));
+            plotWithText(datapoints(:, sliderHandle.Value), sliderHandle.Value, txt);
+        %Use the arrowkeys to move b/w graphs without updating the steps
         case 'leftarrow'
             if sliderValue > 1
                 sliderHandle.Value = sliderValue-1;
@@ -73,6 +87,7 @@ function updatePlot(src, event, sliderHandle, datapoints, folderPath)
                 txt = num2str(data.pressedNums(1,sliderHandle.Value));
                 plotWithText(datapoints(:, sliderHandle.Value), sliderHandle.Value, txt);
             end
+        %Press q to save the data and close the figure
         case 'q'
             disp('closing and saving')
             figFilePath = fullfile(folderPath, 'interactiveFig');
@@ -89,6 +104,8 @@ function updatePlot(src, event, sliderHandle, datapoints, folderPath)
 end
 
 function plotWithText(yVals, traceNum, txt)
+%plotWithText plots a figure with the txt displayed in the top right and
+%the Trace # above the graph.
     plot(yVals)
     hold on;
     xL=xlim;

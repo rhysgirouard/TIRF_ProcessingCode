@@ -16,12 +16,22 @@ function tallySum(sampleFolderPath)
         subfolderPath = fullfile(sampleFolderPath, subfolderNames(i));
         csvFilePath = fullfile(subfolderPath, "stepIDs.csv");
         csvFilePathChar = convertStringsToChars(csvFilePath);
-        sum = sum + csvTallyFxn(csvFilePathChar);
+        if exist(csvFilePathChar, "file") ~= 0
+            sum = sum + csvTallyFxn(csvFilePathChar);
+        end
     end
     columnTitles = [{'Uncounted'}, {'One Step'}, {'Two Steps'}, {'Three Steps'}, {'Four Steps'}, {'Five Steps'}, {'Six Steps'}, {'Seven Steps'}, {'Eight Steps'}, {'Nine Steps'}];
+    totalCounted = sum(2)+sum(3)+sum(4)+sum(5);
+    fractions = [sum(2)/totalCounted, sum(3)/totalCounted, sum(4)/totalCounted];
+    totalRow = [{'Total'}, num2cell(totalCounted), num2cell([0,0,0,0,0,0,0,0])];
     sumAsCell = num2cell(sum);
-    result = [columnTitles;sumAsCell];
-    writecell(result,fullfile(sampleFolderPath, 'sumOfCounts.csv'))
+    fractionsAsCell = [{'Fraction'}, num2cell(fractions), num2cell(NaN(1,6))];
+    emptyRow = num2cell(NaN(1,10));
+    distributionTitles = [NaN, {'Monomers'}, {'Dimers'}, {'Trimers'}, {'Tetramers'}, num2cell(NaN(1,5))];
+    [oligomericDistribtution, ~] = oligomer_distribution_calculation_Fxn(fractions(1:3), 0.7);
+    oligomericDistribtution = [{'Fractions'}, num2cell(transpose(oligomericDistribtution)), num2cell(NaN(1,5))];
+    result = [columnTitles; sumAsCell; totalRow; fractionsAsCell; emptyRow; distributionTitles; oligomericDistribtution];
+    writecell(result,fullfile(sampleFolderPath, 'sumOfCounts.xlsx'))
 
 end
 
