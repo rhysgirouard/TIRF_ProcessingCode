@@ -114,7 +114,7 @@ def saveTrackStatisticsCSV(imagePath, folderPath):
 	sm = SelectionModel(model)
 	ds = DisplaySettings()
 
-	fullPath = folderPath + '/Track statistics.csv'
+	fullPath = os.path.join(folderPath, 'Track statistics.csv')
 	tracksFile = java.io.File(fullPath)
 	trackTableView = TrackTableView(model, sm, ds)
 
