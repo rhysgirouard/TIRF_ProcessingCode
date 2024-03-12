@@ -17,7 +17,7 @@ echo Type/Paste the input folder path and press enter
 read input_folder_var
 
 answer='N'
-while [[ $answer != 'Y' ]];
+while [[ $answer != 'Y' && $answer != 'y' ]];
 do
 echo Does input_folder_var contain only the .nd2 files you wish to process'('i.e. no 3 channel images, partial timelapses, or other files/folders')'? '('Y/N')'
 read answer
