@@ -1,5 +1,5 @@
 arg = getArgument();
-output = arg + "/zz_Results"
+output = arg + File.separator + "zz_Results"
 
 setBatchMode(true); 
 list = getFileList(arg);
@@ -11,9 +11,9 @@ setBatchMode(false);
 eval("script", "System.exit(0);");
 
 function action(input, output, filename) {
-		fullFilePath = input + "/" + filename;
+		fullFilePath = input + File.separator + filename;
 		openString = "open=" + fullFilePath;
         run("Bio-Formats Windowless Importer", openString);
-        saveAs("Tiff", output + "/" + filename);
+        saveAs("Tiff", output + File.separator + filename);
         close();
 }

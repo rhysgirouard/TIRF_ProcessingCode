@@ -17,9 +17,10 @@ disp(subfolderNames);
 % Loop through each subfolder and pass its file path to the external function
 for i = 1:numel(subfolderNames)
     subfolderPath = fullfile(superfolderPath, subfolderNames(i));
-    imagepath = append(subfolderPath, '/', subfolderNames(i), '.tif');
+    imageName = append(subfolderNames(i), '.tif');
+    imagePath = fullfile(subfolderPath, imageName);
     subfolderPathChar = convertStringsToChars(subfolderPath);
-    stackGenerator(subfolderPathChar,imagepath)
+    stackGenerator(subfolderPathChar,imagePath)
 end
 
 end

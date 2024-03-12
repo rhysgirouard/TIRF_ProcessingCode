@@ -105,7 +105,7 @@ hsl = uicontrol('Style','slider','Min',slmin,'Max',slmax,...
 %  set(hsl,'Callback',@(hObject,eventdata) plot(moving_avr_intensity(:,round(get(hObject,'Value')))))
    set(hsl,'Callback',@(hObject,eventdata) plot(avg_intensity_survival(:,round(get(hObject,'Value')))))
 
-savefig(append(tifFolderPath, "/Figure1.fig"))
+savefig(fullfile(tifFolderPath, "Figure1.fig"))
 close
 delete(savedFilePath)
 

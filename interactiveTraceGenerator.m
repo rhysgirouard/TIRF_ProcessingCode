@@ -37,7 +37,7 @@ end
 
 function updatePlot(src, event, sliderHandle, datapoints, folderPath)
 
-    %check if file path has changed
+    %check if file path has changed and update it if it has
     folderPath = fileChecker(folderPath);
 
     % Get the key that was pressed

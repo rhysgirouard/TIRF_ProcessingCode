@@ -26,7 +26,7 @@ function [] = folderMakerFxn(folderPath)
             mkdir(subfolderPath);
             disp(['Subfolder created for ', tifFileNames(i)]);
             movefile(fullPathCurrentTif, subfolderPath)
-            newFilePath = append(subfolderPath, '/', tifFileNames(i));
+            newFilePath = fullfile(subfolderPath, tifFileNames(i));
             [~, ~, OriginalStack] = firstFramesGenerator(newFilePath);
             save(fullfile(subfolderPath, 'OriginalStack.mat'), 'OriginalStack')
         end
