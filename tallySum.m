@@ -32,7 +32,8 @@ function tallySum(sampleFolderPath)
     oligomericDistribtution = [{'Fractions'}, num2cell(transpose(oligomericDistribtution)), num2cell(NaN(1,5))];
     result = [columnTitles; sumAsCell; totalRow; fractionsAsCell; emptyRow; distributionTitles; oligomericDistribtution];
     writecell(result,fullfile(sampleFolderPath, 'sumOfCounts.xlsx'))
-
+    disp(['Total Counted: ', num2str(totalCounted)])
+    disp(['Uncounted: ', num2str(sum(1))])
 end
 
 function digitCounts = csvTallyFxn(csvFilePath)
