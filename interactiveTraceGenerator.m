@@ -98,8 +98,8 @@ function updatePlot(src, event, sliderHandle, datapoints, folderPath)
             savefig(figFilePath)
             NumberOfSteps = transpose(data.pressedNums);
             stepIDFilePath = fullfile(folderPath, 'stepIDs.csv');
-            TraceNumber = (1:length(NumberOfSteps));
-            stepIDTable = table(TraceNumber, NumberOfSteps);
+            TraceNumbers = transpose((1:length(NumberOfSteps)));
+            stepIDTable = table(TraceNumbers, NumberOfSteps);
             writetable(stepIDTable, stepIDFilePath)
             close
         otherwise
