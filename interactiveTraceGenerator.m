@@ -53,13 +53,17 @@ function updatePlot(src, event, sliderHandle, datapoints, folderPath)
     switch keyPressed
         % IF a number is presssed record it and move to the next trace
         case {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}
-            data.pressedNums(1,sliderValue) = str2double(keyPressed);
-            guidata(src,data)
-            if sliderValue < max
-                sliderHandle.Value = sliderValue+1;
+            %additionally checks that a modifier key is not being pressed
+            %such as command or shift; w/o this MATLAB reads command as 0
+            if isempty(event.Modifier)
+                data.pressedNums(1,sliderValue) = str2double(keyPressed);
+                guidata(src,data)
+                if sliderValue < max
+                    sliderHandle.Value = sliderValue+1;
+                end
+                txt = num2str(data.pressedNums(1,sliderHandle.Value));
+                plotWithText(datapoints(:, sliderHandle.Value), sliderHandle.Value, txt);
             end
-            txt = num2str(data.pressedNums(1,sliderHandle.Value));
-            plotWithText(datapoints(:, sliderHandle.Value), sliderHandle.Value, txt);
         % When you want to zoom in on the start of the graph use a, s, d, f
         % for the range 1:100, 1:200, 1:300, all respectively
         case {'a'}
@@ -94,7 +98,7 @@ function updatePlot(src, event, sliderHandle, datapoints, folderPath)
             savefig(figFilePath)
             NumberOfSteps = transpose(data.pressedNums);
             stepIDFilePath = fullfile(folderPath, 'stepIDs.csv');
-            TraceNumber = (1:length(NumberOfSteps)).';
+            TraceNumber = (1:length(NumberOfSteps));
             stepIDTable = table(TraceNumber, NumberOfSteps);
             writetable(stepIDTable, stepIDFilePath)
             close
