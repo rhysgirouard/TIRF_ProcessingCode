@@ -1,6 +1,8 @@
 function interactiveTraceGenerator(folderPath)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
+%interactiveTraceGenerator generates an interactive figure for the folder
+%   takes in a folderpath and uses the AvgIntensity data generated
+%   by tracePlotterOriginalFig to create a figure containg all the traces
+%   from the folder tif that can be covieniently labeled and zoomed
 
 csvFilePath = fullfile(folderPath,  'AvgIntesnitySurvivalData.csv');
 
