@@ -23,7 +23,7 @@ function tallySum(sampleFolderPath)
     columnTitles = [{'Uncounted'}, {'One Step'}, {'Two Steps'}, {'Three Steps'}, {'Four Steps'}, {'Five Steps'}, {'Six Steps'}, {'Seven Steps'}, {'Eight Steps'}, {'Nine Steps'}];
     totalCounted = sum(2)+sum(3)+sum(4)+sum(5);
     fractions = [sum(2)/totalCounted, sum(3)/totalCounted, sum(4)/totalCounted];
-    totalRow = [{'Total'}, num2cell(totalCounted), num2cell([0,0,0,0,0,0,0,0])];
+    totalRow = [{'Total'}, num2cell(totalCounted), '% Counted', num2cell(totalCounted/(sum(1)+totalCounted)), num2cell([0,0,0,0,0,0])];
     sumAsCell = num2cell(sum);
     fractionsAsCell = [{'Fraction'}, num2cell(fractions), num2cell(NaN(1,6))];
     emptyRow = num2cell(NaN(1,10));
