@@ -20,10 +20,9 @@ if exist(fullfile(folderPath,'stepIDs.csv'), 'file') == 0
     data.pressedNums = zeros(slmax,1);
 else
     T = readtable(fullfile(folderPath,'stepIDs.csv'));
-    data.pressedNums = T.NumberOfSteps;
+    data.pressedNums = T.(2);
 end
 
-data.folderPath = folderPath;
 guidata(fig1,data)
 
 set(fig1, 'KeyPressFcn', @(src, event) updatePlot(src, event, hsl, avg_intensity_survival));
@@ -32,10 +31,10 @@ disp('finishing and saving')
 figFilePath = fullfile(folderPath, 'interactiveFig');
 savefig(figFilePath)
 
-
+NumberOfSteps = data.pressedNums;
 stepIDFilePath = fullfile(folderPath, 'stepIDs.csv');
 TraceNumber = (1:length(data.pressedNums)).';
-stepIDTable = table(TraceNumber, data.pressedNums);
+stepIDTable = table(TraceNumber, NumberOfSteps);
 writetable(stepIDTable, stepIDFilePath)
 
 close
@@ -44,14 +43,9 @@ end
 
 function updatePlot(src, event, sliderHandle, datapoints)
 
-    %Read in the arrays to track the step IDs and folderPath
+    %Read in the array to track the step IDs
     data = guidata(src);
-    folderPath = data.folderPath;
-
-    %check if file path has changed and update it if it has
-    folderPath = fileChecker(folderPath);
-    data.folderPath = folderPath;
-    
+    [folderPath, ~, ~] = fileparts(src.FileName);
 
     % Get the key that was pressed
     keyPressed = event.Key;
@@ -106,8 +100,7 @@ function updatePlot(src, event, sliderHandle, datapoints)
         %Press q to save the data and close the figure
         case 'q'
             disp('closing and saving')
-            figFilePath = fullfile(folderPath, 'interactiveFig');
-            savefig(figFilePath)
+            savefig(src.FileName)
             stepIDFilePath = fullfile(folderPath, 'stepIDs.csv');
             TraceNumbers = transpose((1:length(data.pressedNums)));
             NumberOfSteps = data.pressedNums;
