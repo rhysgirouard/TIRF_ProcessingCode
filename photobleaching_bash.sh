@@ -19,7 +19,7 @@ read input_folder_var
 answer='N'
 while [[ $answer != 'Y' && $answer != 'y' ]];
 do
-echo Does input_folder_var contain only the .nd2 files you wish to process'('i.e. no 3 channel images, partial timelapses, or other files/folders')'? '('Y/N')'
+echo Does input_folder_var contain only the .nd2 files you wish to process'('i.e. no 3 channel images, partial timelapses, or other files/folders')'? '('y/n')'
 read answer
 done
 
@@ -46,7 +46,7 @@ trackMateScript=$code_folder'/TrackMateForBash.py'
 $fiji_path --ij2 --console --run $trackMateScript folder_path=$results_folder_double_quotes
 
 # call a Matlab function for generating figures
-$matlab_path -nodisplay -r "figureSaverOriginalFig($results_folder_single_quotes) ; exit;"
+$matlab_path -nodisplay -r "folderFigureMakerFxn($results_folder_single_quotes, 1, 1, 1) ; exit;"
 
 # The following removes the ugly 'zz_' from the results folder name	
 mv $results_folder $input_folder_var'/Results'
