@@ -17,12 +17,18 @@ hsl = uicontrol('Style','slider','Min',slmin,'Max',slmax,...
 %  set(hsl,'Callback',@(hObject,eventdata) plot(moving_avr_intensity(:,round(get(hObject,'Value')))))
    set(hsl,'Callback',@(hObject,eventdata) plot(avg_intensity_survival(:,round(get(hObject,'Value')))))
 
-%check if the figure has already been partially or completely counted   
-if exist(fullfile(folderPath,'stepIDs.csv'), 'file') == 0
+%check if the figure has previously been created or not  
+if exist(fullfile(folderPath, 'interactiveFig.fig'), 'file') == 0
     data.pressedNums = zeros(slmax,1);
 else
-    T = readtable(fullfile(folderPath,'stepIDs.csv'));
-    data.pressedNums = T.(2);
+    oldFig = openfig(fullfile(folderPath, 'interactiveFig.fig'), 'invisible');
+    oldData = guidata(oldFig);
+    data.pressedNums = oldData.pressedNums;
+    %check if using the old version where stepIds are a wide row instead of a tall column
+    if size(data.pressedNums, 1) < size(data.pressedNums, 2)
+        data.pressedNums = transpose(data.pressedNums);
+    end
+    close(oldFig)
 end
 
 guidata(fig1,data)
