@@ -16,6 +16,8 @@ hsl = uicontrol('Style','slider','Min',slmin,'Max',slmax,...
                  'Position',[20 0 200 20]);
 %  set(hsl,'Callback',@(hObject,eventdata) plot(moving_avr_intensity(:,round(get(hObject,'Value')))))
    set(hsl,'Callback',@(hObject,eventdata) plot(avg_intensity_survival(:,round(get(hObject,'Value')))))
+
+%check if the figure has already been partially or completely counted   
 if exist(fullfile(folderPath,'stepIDs.csv'), 'file') == 0
     data.pressedNums = zeros(slmax,1);
 else
