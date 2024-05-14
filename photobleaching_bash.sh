@@ -25,7 +25,7 @@ done
 
 # makes a folder for all outputs (zz_ is used to place the folder last alphabetically so that the script can process all but the last entry)
 results_folder=$input_folder_var'/zz_Results'
-mkdir $results_folder
+mkdir "$results_folder"
 
 #adds quotes for correct interpretation by further code
 results_folder_single_quotes="'"$results_folder"'"
