@@ -51,7 +51,7 @@ Every time you run the code:
 
 4. Check that the provided folder does not contain any other files then type 'Y' and press enter.
 
-4. After the terminal finishes the Results folder should be renamed to Results instead of zz_Results. If it is still zz_Results there has been an error
+5. Wait for the program to finish in the background. Fiji will open images temporarily while it runs. You may need to switch to a different desktop to hide the Fiji pop-ups.
 
 6. Group the image folders in results by sample conditions
 

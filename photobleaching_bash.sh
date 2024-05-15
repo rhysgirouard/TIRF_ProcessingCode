@@ -23,8 +23,8 @@ echo Does input_folder_var contain only the .nd2 files you wish to process'('i.e
 read answer
 done
 
-# makes a folder for all outputs (zz_ is used to place the folder last alphabetically so that the script can process all but the last entry)
-results_folder=$input_folder_var'/zz_Results'
+# makes a folder for all outputs 
+results_folder=$input_folder_var'/Results'
 mkdir "$results_folder"
 
 #adds quotes for correct interpretation by further code
@@ -32,9 +32,10 @@ results_folder_single_quotes="'"$results_folder"'"
 results_folder_double_quotes="\"$results_folder\""
 
 
-# run a Fiji macro to convert .nd2 files to .tif (headless mode does not work for BioFormatsImporter)
-conversionMacro=$code_folder'/ConvertToTifMacroForBash.ijm'
-$fiji_path -macro $conversionMacro $input_folder_var
+# run a Fiji script to convert .nd2 files to .tif (headless mode does not work for BioFormatsImporter)
+conversionScript=$code_folder'/ConvertToTiff.py'
+formatted_input=\"$input_folder_var'zzzzz'$results_folder'zzzzz'.nd2\"
+$fiji_path --ij2 --console --run $conversionScript input=$formatted_input
 
 # run Matlab folderMaker on folder to generate first3frames and subfolders for each time-lapse
 $matlab_path -nodisplay -r "folderMakerFxn($results_folder_single_quotes) ; exit;"
@@ -47,6 +48,3 @@ $fiji_path --ij2 --console --run $trackMateScript folder_path=$results_folder_do
 
 # call a Matlab function for generating figures
 $matlab_path -nodisplay -r "folderFigureMakerFxn($results_folder_single_quotes, 1, 1, 1) ; exit;"
-
-# The following removes the ugly 'zz_' from the results folder name	
-mv $results_folder $input_folder_var'/Results'

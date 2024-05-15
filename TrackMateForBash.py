@@ -116,7 +116,7 @@ def saveTrackStatisticsCSV(imagePath, folderPath):
 
 	fullPath = os.path.join(folderPath, 'Track statistics.csv')
 	tracksFile = java.io.File(fullPath)
-	trackTableView = TrackTableView(model, sm, ds)
+	trackTableView = TrackTableView(model, sm, ds, imagePath)
 
 	trackTableView.getTrackTable().exportToCsv(tracksFile)
 
