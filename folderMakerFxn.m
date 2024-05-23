@@ -31,6 +31,7 @@ function [] = folderMakerFxn(folderPath)
             save(fullfile(subfolderPath, 'OriginalStack.mat'), 'OriginalStack')
         end
     end
+    disp('Folders generated. Proceeding to next step')
 
 
 end

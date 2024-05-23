@@ -12,9 +12,29 @@ fiji_path='/Applications/Fiji.app/Contents/MacOS/ImageJ-macosx'
 
 #YOU SHOULD NOT HAVE TO EDIT ANYTHING BELOW THIS
 
+#First check the provided matlab and fiji paths
+if [ ! -f $matlab_path ]; then
+    echo "The MATLAB path provided does not lead to an executable. You may need to use Show package contents to find the correct file. Paste the correct path in the script and try again."
+    exit
+fi
+
+if [ ! -f $fiji_path ]; then
+    echo "The Fiji path provided does not lead to an executable. You may need to use Show package contents to find the correct file. Paste the correct path in the script and try again."
+    exit
+fi
+
 #This asks for the folder path from the user when the script is run.
 echo Type/Paste the input folder path and press enter
 read input_folder_var
+while [[ ! -d $input_folder_var ]]
+do
+    echo "The provided input folder is not a folder! please paste the path to a valid folder or type exit to end the script"
+    read input_folder_var
+    if [[ $input_folder_var == exit ]]; then
+        echo "Ending Script!"
+        exit
+    fi
+done
 
 answer='N'
 while [[ $answer != 'Y' && $answer != 'y' ]];
@@ -33,12 +53,18 @@ results_folder_double_quotes="\"$results_folder\""
 
 
 # run a Fiji script to convert .nd2 files to .tif (headless mode does not work for BioFormatsImporter)
+# Providing multiple inputs within a bash script is difficult so a single string is constructed and split on zzzzz within the python script
 conversionScript=$code_folder'/ConvertToTiff.py'
 formatted_input=\"$input_folder_var'zzzzz'$results_folder'zzzzz'.nd2\"
 $fiji_path --ij2 --console --run $conversionScript input=$formatted_input
 
 # run Matlab folderMaker on folder to generate first3frames and subfolders for each time-lapse
-$matlab_path -nodisplay -r "folderMakerFxn($results_folder_single_quotes) ; exit;"
+result=$($matlab_path -batch "folderMakerFxn($results_folder_single_quotes) ; exit;")
+
+if [[ $result != *"Folders generated. Proceeding to next step"* ]]; then
+    echo "MATLAB folderMakerFxn Failed!"
+    exit
+fi
 
 
 # Run a fiji python script to create trackstatistics for each firstFrames using Trackmate
