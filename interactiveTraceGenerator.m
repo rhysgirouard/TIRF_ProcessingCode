@@ -1,4 +1,4 @@
-function interactiveTraceGeneratortest(folderPath)
+function interactiveTraceGenerator(folderPath)
 %interactiveTraceGenerator generates an interactive figure for the folder
 %   takes in a folderpath and uses the AvgIntensity data generated
 %   by tracePlotterOriginalFig to create a figure containg all the traces
