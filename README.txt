@@ -10,7 +10,7 @@ INSTRUCTIONS:
 For the first time only:
 1. Ensure that all code components are in the same folder, that folder has been added to the MATLAB search path, and that path has been saved with savepath (simply opening matlab in the correct place is not enough as matlab will be called separately in the terminal)
 	For example: >>addpath('/Users/rhysg/Documents/YalePGRA/MinimumRequiredFiles')
-		         >>savepath
+		     >>savepath
 	-you can check what folders are on the path with >>path (it'll be at the top of the list)
 	 you should check that it is still correct after restarting MATLAB as without the savepath command the path is not conserved between sessions
 
@@ -57,7 +57,7 @@ Every time you run the code:
 
 7. Open an interactiveFig.fig
 
-8. Use the number keys to ID a trace's number of steps. Pressing a number key will advance to the next trace. Using the left or right arrow keys will allow you to move through the traces without changing the assigned number of steps. The default number 0 indicates an uncounted trace. a,s,d keys will zoom in on the first 100,200,300 frames of the trace and the f key will return to the full view. 
+8. Use the number keys to ID a trace's number of steps. Pressing a number key will advance to the next trace. Using the left or right arrow keys will allow you to move through the traces without changing the assigned number of steps. The default number 0 indicates an uncounted trace. a,s,d keys will zoom in on the first 100,200,300 frames of the trace and the f key will return to the full view. You can also use the up and down arrow keys to zoom. 
 
 9. If you use any other GUI components such as the zoom feature or the slider you must deselect that feature and click again on the graph to reactivate the keypress control.
 

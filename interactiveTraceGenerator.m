@@ -1,4 +1,4 @@
-function interactiveTraceGenerator(folderPath)
+function interactiveTraceGeneratortest(folderPath)
 %interactiveTraceGenerator generates an interactive figure for the folder
 %   takes in a folderpath and uses the AvgIntensity data generated
 %   by tracePlotterOriginalFig to create a figure containg all the traces
@@ -60,7 +60,8 @@ function updatePlot(src, event, sliderHandle, datapoints)
     %check the current trace index
     sliderValue = round(get(sliderHandle, 'Value'));
                
-    max = size(datapoints,2);
+    numberOfTraces = size(datapoints,2);
+    numberOfFrames = size(datapoints,1);
     
     quitting = false;
     % Check which key was pressed
@@ -72,7 +73,10 @@ function updatePlot(src, event, sliderHandle, datapoints)
             if isempty(event.Modifier)
                 data.pressedNums(sliderValue) = str2double(keyPressed);
                 guidata(src,data)
-                if sliderValue < max
+                txt = num2str(data.pressedNums(sliderHandle.Value));
+                plotWithOverlay(datapoints(:, sliderHandle.Value), sliderHandle.Value, txt);
+                pause(0.20)
+                if sliderValue < numberOfTraces
                     sliderHandle.Value = sliderValue+1;
                 end
                 txt = num2str(data.pressedNums(sliderHandle.Value));
@@ -100,11 +104,24 @@ function updatePlot(src, event, sliderHandle, datapoints)
                 plotWithText(datapoints(:, sliderHandle.Value), sliderHandle.Value, txt)
             end
         case 'rightarrow'
-            if sliderValue < max
+            if sliderValue < numberOfTraces
                 sliderHandle.Value = sliderValue+1;
                 txt = num2str(data.pressedNums(sliderHandle.Value));
                 plotWithText(datapoints(:, sliderHandle.Value), sliderHandle.Value, txt);
             end
+            % use the up and down arrows to zoom dynamically. Zoom is
+            % 'circular' so zoom out at full view goes to minimum zoom
+        case {'uparrow', 'downarrow'}
+            %indexing directly doesn't work maybe I can find another way?
+            currentXlimits = xlim;
+            xMax = currentXlimits(2);
+            if strcmp(keyPressed, 'uparrow')
+                newLim = mod((xMax + 99), numberOfFrames)+1;
+            elseif strcmp(keyPressed, 'downarrow')
+                newLim = mod((xMax - 101), numberOfFrames)+1;
+            end
+            txt = num2str(data.pressedNums(sliderHandle.Value));
+            plotWithText(datapoints(1:newLim, sliderHandle.Value), sliderHandle.Value, txt);
         %Press q to save the data and close the figure
         case 'q'
             disp('closing and saving')
@@ -131,6 +148,7 @@ function plotWithText(yVals, traceNum, txt)
 %plotWithText plots a figure with the txt displayed in the top right and
 %the Trace # above the graph.
     plot(yVals)
+    xlim([1 length(yVals)])
     hold on;
     xL=xlim;
     yL=ylim;
@@ -138,5 +156,20 @@ function plotWithText(yVals, traceNum, txt)
     % Set the position where you want to place the text
     text(0.99*xL(2),0.99*yL(2), ['Steps:', txt], 'HorizontalAlignment','right',...
         'VerticalAlignment','top', 'FontSize', 30, 'Color', [1, 0, 0, 0])
+    hold off
+end
+
+function plotWithOverlay(yVals, traceNum, txt)
+%plotWithText plots a figure with the txt displayed large in the middle 
+%and the Trace # above the graph.
+    plot(yVals)
+    xlim([1 length(yVals)])
+    hold on;
+    xL=xlim;
+    yL=ylim;
+    title(['Trace #', num2str(traceNum)])
+    % Set the position where you want to place the text
+    text(0.5*(xL(1)+xL(2)),0.5*(yL(1)+yL(2)), ['Steps:', txt], 'HorizontalAlignment','center',...
+        'VerticalAlignment','middle', 'FontSize', 100, 'Color', [1, 0, 0, 0])
     hold off
 end
