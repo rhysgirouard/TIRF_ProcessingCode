@@ -63,6 +63,8 @@ function updatePlot(src, event, sliderHandle, datapoints)
     numberOfTraces = size(datapoints,2);
     numberOfFrames = size(datapoints,1);
     
+    newLim = numberOfFrames;
+
     quitting = false;
     % Check which key was pressed
     switch keyPressed
@@ -85,15 +87,19 @@ function updatePlot(src, event, sliderHandle, datapoints)
         % When you want to zoom in on the start of the graph use a, s, d, f
         % for the range 1:100, 1:200, 1:300, all respectively
         case {'a'}
+            newLim = 100;
             txt = num2str(data.pressedNums(sliderHandle.Value));
             plotWithText(datapoints(1:100, sliderHandle.Value), sliderHandle.Value, txt);
         case {'s'}
+            newLim = 200;
             txt = num2str(data.pressedNums(sliderHandle.Value));
             plotWithText(datapoints(1:200, sliderHandle.Value), sliderHandle.Value, txt);
         case {'d'}
+            newLim = 300;
             txt = num2str(data.pressedNums(sliderHandle.Value));
             plotWithText(datapoints(1:300, sliderHandle.Value), sliderHandle.Value, txt);
         case {'f'}
+            newLim = 1500;
             txt = num2str(data.pressedNums(sliderHandle.Value));
             plotWithText(datapoints(:, sliderHandle.Value), sliderHandle.Value, txt);
         %Use the arrowkeys to move b/w graphs without updating the steps

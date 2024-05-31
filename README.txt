@@ -14,14 +14,7 @@ For the first time only:
 	-you can check what folders are on the path with >>path (it'll be at the top of the list)
 	 you should check that it is still correct after restarting MATLAB as without the savepath command the path is not conserved between sessions
 
-2. Open the photobleaching_bash.sh file in a text editor and paste the correct code_folder variable to the path that is right for you
-
-3. Check that the matlab_path and fiji_path variables are pointing to the correct locations on your computer (NOTE that this is NOT just the application path itself but specific content within the app; it should be very similar for most users though)
-    Ex: For /path/to/MATLAB_R2023b.app/bin/matlab you would replace /path/to with the path to MATLAB on your computer and keep /bin/matlab on the end
-
-4. Save your changes to the .sh file
-
-5. Set your desired spot size and quality threshold for use by Trackmate by editing 'RADIUS' and 'THRESHOLD' in TrackmateForBash.py and saving
+2. Determine the spot size and quality threshold for your data. You can do this by using trackMate on a representative acquisition. Lower quality thresholds are more likely to pick up background noise and auto fluorescent dust... 
     The defaults are a radius of 3 pixels and a quality of 50. You can determine what works best for you by previewing spot tracking in a manual Trackmate run.
     All data should be processed with the same settings though.
 
@@ -44,32 +37,27 @@ The following errors are not issues and can be ignored:
 Every time you run the code:
 1. Move the three channel image stacks to a separate folder. They confuse the code(these can be put back after figures have been generated)
 
-2. Open a terminal window and run /bin/bash /path/to/file replacing /path/to/file with the correct path to the photobleaching_bash.sh file in the code folder
-    Ex: rhysg$ /bin/bash /Users/rhysg/Documents/YalePGRA/TIRF_ProcessingCode/photobleaching_bash.sh
+2. Run matlabGUI and follow all prompt pop-ups. The first time it is run it will ask for some additional information
 
-3. When prompted by the terminal paste the path to the folder of .nd2 images and press enter
+3. Wait for the program to finish in the background. Fiji will open images temporarily while it runs. You may need to switch to a different desktop to hide the Fiji pop-ups.
 
-4. Check that the provided folder does not contain any other files then type 'Y' and press enter.
+4. Group the image folders in results by sample conditions
 
-5. Wait for the program to finish in the background. Fiji will open images temporarily while it runs. You may need to switch to a different desktop to hide the Fiji pop-ups.
+5. Open an interactiveFig.fig
 
-6. Group the image folders in results by sample conditions
+6. Use the number keys to ID a trace's number of steps. Pressing a number key will advance to the next trace. Using the left or right arrow keys will allow you to move through the traces without changing the assigned number of steps. The default number 0 indicates an uncounted trace. a,s,d keys will zoom in on the first 100,200,300 frames of the trace and the f key will return to the full view. You can also use the up and down arrow keys to zoom. 
 
-7. Open an interactiveFig.fig
+7. If you use any other GUI components such as the zoom feature or the slider you must deselect that feature and click again on the graph to reactivate the keypress control.
 
-8. Use the number keys to ID a trace's number of steps. Pressing a number key will advance to the next trace. Using the left or right arrow keys will allow you to move through the traces without changing the assigned number of steps. The default number 0 indicates an uncounted trace. a,s,d keys will zoom in on the first 100,200,300 frames of the trace and the f key will return to the full view. You can also use the up and down arrow keys to zoom. 
+8. Press the 'q' key to close and save the graph. If you do not press the q key entered data will not be saved to the .csv and will not be included in the counts later
 
-9. If you use any other GUI components such as the zoom feature or the slider you must deselect that feature and click again on the graph to reactivate the keypress control.
+9. You can reopen and resume or update any figure at any time.
 
-10. Press the 'q' key to close and save the graph. If you do not press the q key entered data will not be saved to the .csv and will not be included in the counts later
+10. Repeat steps 7-11 for all desired figures or until you have counted at least 1000 traces
 
-11. You can reopen and resume or update any figure at any time.
+11. Group any uncounted figures into a subfolder so that they don't contribute to summary statistics
 
-12. Repeat steps 7-11 for all desired figures
-
-13. Group any uncounted figures into a subfolder so that they don't contribute to summary statistics
-
-14. Run tallySum('/path/to/sample') with the desired completed sample folder to create a .csv containing the totaled counts and approximated oligomer distribution from all .csv's in direct subfolders of the provided folder.
-    Note that tallySum will count all figures in any subfolders of the given folder and thus will only provide useful information if folders have been grouped as instructed in steps 6 adn 13
-    Also note that tallySum is run automatically on the 'q' keyPress described in step 10 but may need to be rerun if you want to exclude folders as in step 13 or regroup as in step 6
+12. Run tallySum('/path/to/sample') with the desired completed sample folder to create a .csv containing the totaled counts and approximated oligomer distribution from all .csv's in direct subfolders of the provided folder.
+    Note that tallySum will count all figures in any subfolders of the given folder and thus will only provide useful information if folders have been grouped as instructed in steps 4 and 11
+    Also note that tallySum is run automatically on the 'q' keyPress described in step 8 but may need to be rerun if you want to exclude folders as in step 11 or regroup as in step 4
 

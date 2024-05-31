@@ -44,9 +44,11 @@ def process(srcDir, dstDir, fileName):
 
 listOfInputs = input.split("zzzzz")
 srcFile = listOfInputs[0]
-dstFile = listOfInputs[1]
-ext = listOfInputs[2]
 print(srcFile)
+dstFile = listOfInputs[1]
+print(dstFile)
+ext = listOfInputs[2]
+print(ext)
 run()
 
 System.exit(0);
