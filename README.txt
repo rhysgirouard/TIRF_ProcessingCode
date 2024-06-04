@@ -8,19 +8,14 @@ WARNING: Any spaces in provided folder paths can break the code so make sure to 
 INSTRUCTIONS:
 
 For the first time only:
-1. Ensure that all code components are in the same folder, that folder has been added to the MATLAB search path, and that path has been saved with savepath (simply opening matlab in the correct place is not enough as matlab will be called separately in the terminal)
-	For example: >>addpath('/Users/rhysg/Documents/YalePGRA/MinimumRequiredFiles')
-		     >>savepath
-	-you can check what folders are on the path with >>path (it'll be at the top of the list)
-	 you should check that it is still correct after restarting MATLAB as without the savepath command the path is not conserved between sessions
-
-2. Determine the spot size and quality threshold for your data. You can do this by using trackMate on a representative acquisition. Lower quality thresholds are more likely to pick up background noise and auto fluorescent dust... 
+1. Determine the spot size and quality threshold for your data. You can do this by using trackMate on a representative acquisition. Lower quality thresholds are more likely to pick up background noise and auto fluorescent dust... 
     The defaults are a radius of 3 pixels and a quality of 50. You can determine what works best for you by previewing spot tracking in a manual Trackmate run.
-    All data should be processed with the same settings though.
+    All data should be processed with the same settings.
 
 Before you run the code:
-    The code processes all the images in the folder together and so will finish with all the images at the same time. 
-    This means it can be better to process them in chunks so that you can start analyzing sooner.
+1. Move the three channel image stacks to a separate folder. They confuse the code(these can be put back after figures have been generated)
+2. Check that folder paths do not contain spaces as this will disrupt the code
+3. The code processes all the images in the folder together and so will finish with all the images at the same time. This means it can be better to process them in chunks so that you can start analyzing sooner.
 
 The following errors are not issues and can be ignored:
 
@@ -35,9 +30,9 @@ The following errors are not issues and can be ignored:
     2024-03-21 12:22:13.045 MATLAB[12023:2449538] CoreText note: Set a breakpoint on CTFontLogSystemFontNameRequest to debug. 
 
 Every time you run the code:
-1. Move the three channel image stacks to a separate folder. They confuse the code(these can be put back after figures have been generated)
+1. Open MATLAB
 
-2. Run matlabGUI and follow all prompt pop-ups. The first time it is run it will ask for some additional information
+2. Run NNB_ImageProcessingScript and follow all prompt pop-ups. The first time it is run it will ask for some additional information
 
 3. Wait for the program to finish in the background. Fiji will open images temporarily while it runs. You may need to switch to a different desktop to hide the Fiji pop-ups.
 
