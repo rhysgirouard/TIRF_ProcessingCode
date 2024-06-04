@@ -76,49 +76,34 @@ function updatePlot(src, event, sliderHandle, datapoints)
                 data.pressedNums(sliderValue) = str2double(keyPressed);
                 guidata(src,data)
                 txt = num2str(data.pressedNums(sliderHandle.Value));
-                plotWithOverlay(datapoints(:, sliderHandle.Value), sliderHandle.Value, txt);
+                plotWithText(datapoints(:, sliderHandle.Value), sliderHandle.Value, txt, true);
                 pause(0.20)
                 if sliderValue < numberOfTraces
                     sliderHandle.Value = sliderValue+1;
                 end
-                txt = num2str(data.pressedNums(sliderHandle.Value));
-                plotWithText(datapoints(:, sliderHandle.Value), sliderHandle.Value, txt);
             end
         % When you want to zoom in on the start of the graph use a, s, d, f
         % for the range 1:100, 1:200, 1:300, all respectively
         case {'a'}
             newLim = 100;
-            txt = num2str(data.pressedNums(sliderHandle.Value));
-            plotWithText(datapoints(1:100, sliderHandle.Value), sliderHandle.Value, txt);
         case {'s'}
             newLim = 200;
-            txt = num2str(data.pressedNums(sliderHandle.Value));
-            plotWithText(datapoints(1:200, sliderHandle.Value), sliderHandle.Value, txt);
         case {'d'}
             newLim = 300;
-            txt = num2str(data.pressedNums(sliderHandle.Value));
-            plotWithText(datapoints(1:300, sliderHandle.Value), sliderHandle.Value, txt);
         case {'f'}
             newLim = 1500;
-            txt = num2str(data.pressedNums(sliderHandle.Value));
-            plotWithText(datapoints(:, sliderHandle.Value), sliderHandle.Value, txt);
         %Use the arrowkeys to move b/w graphs without updating the steps
         case 'leftarrow'
             if sliderValue > 1
                 sliderHandle.Value = sliderValue-1;
-                txt = num2str(data.pressedNums(sliderHandle.Value));
-                plotWithText(datapoints(:, sliderHandle.Value), sliderHandle.Value, txt)
             end
         case 'rightarrow'
             if sliderValue < numberOfTraces
                 sliderHandle.Value = sliderValue+1;
-                txt = num2str(data.pressedNums(sliderHandle.Value));
-                plotWithText(datapoints(:, sliderHandle.Value), sliderHandle.Value, txt);
             end
             % use the up and down arrows to zoom dynamically. Zoom is
             % 'circular' so zoom out at full view goes to minimum zoom
         case {'uparrow', 'downarrow'}
-            %indexing directly doesn't work maybe I can find another way?
             currentXlimits = xlim;
             xMax = currentXlimits(2);
             if strcmp(keyPressed, 'uparrow')
@@ -126,31 +111,32 @@ function updatePlot(src, event, sliderHandle, datapoints)
             elseif strcmp(keyPressed, 'downarrow')
                 newLim = mod((xMax - 101), numberOfFrames)+1;
             end
-            txt = num2str(data.pressedNums(sliderHandle.Value));
-            plotWithText(datapoints(1:newLim, sliderHandle.Value), sliderHandle.Value, txt);
+            
         %Press q to save the data and close the figure
         case 'q'
-            disp('closing and saving')
-            savefig(src.FileName)
-            stepIDFilePath = fullfile(folderPath, 'stepIDs.csv');
-            TraceNumbers = transpose((1:length(data.pressedNums)));
-            NumberOfSteps = data.pressedNums;
-            stepIDTable = table(TraceNumbers, NumberOfSteps);
-            writetable(stepIDTable, stepIDFilePath)
-            [superfolder, ~, ~] = fileparts(folderPath);
-            tallySum(superfolder)
-            guidata(src,data)
             quitting = true;
-            close
         otherwise
             disp('Unrecognized input')
     end
-    if ~quitting
-        guidata(src,data)
+    txt = num2str(data.pressedNums(sliderHandle.Value));
+    plotWithText(datapoints(1:newLim, sliderHandle.Value), sliderHandle.Value, txt, false);
+    guidata(src,data)
+
+    if quitting
+        disp('closing and saving')
+        savefig(src.FileName)
+        stepIDFilePath = fullfile(folderPath, 'stepIDs.csv');
+        TraceNumbers = transpose((1:length(data.pressedNums)));
+        NumberOfSteps = data.pressedNums;
+        stepIDTable = table(TraceNumbers, NumberOfSteps);
+        writetable(stepIDTable, stepIDFilePath)
+        [superfolder, ~, ~] = fileparts(folderPath);
+        tallySum(superfolder)
+        close
     end
 end
 
-function plotWithText(yVals, traceNum, txt)
+function plotWithText(yVals, traceNum, txt, withOverlay)
 %plotWithText plots a figure with the txt displayed in the top right and
 %the Trace # above the graph.
     plot(yVals)
@@ -160,22 +146,12 @@ function plotWithText(yVals, traceNum, txt)
     yL=ylim;
     title(['Trace #', num2str(traceNum)])
     % Set the position where you want to place the text
-    text(0.99*xL(2),0.99*yL(2), ['Steps:', txt], 'HorizontalAlignment','right',...
-        'VerticalAlignment','top', 'FontSize', 30, 'Color', [1, 0, 0, 0])
-    hold off
-end
-
-function plotWithOverlay(yVals, traceNum, txt)
-%plotWithText plots a figure with the txt displayed large in the middle 
-%and the Trace # above the graph.
-    plot(yVals)
-    xlim([1 length(yVals)])
-    hold on;
-    xL=xlim;
-    yL=ylim;
-    title(['Trace #', num2str(traceNum)])
-    % Set the position where you want to place the text
-    text(0.5*(xL(1)+xL(2)),0.5*(yL(1)+yL(2)), ['Steps:', txt], 'HorizontalAlignment','center',...
+    if withOverlay
+        text(0.5*(xL(1)+xL(2)),0.5*(yL(1)+yL(2)), ['Steps:', txt], 'HorizontalAlignment','center',...
         'VerticalAlignment','middle', 'FontSize', 100, 'Color', [1, 0, 0, 0])
+    else
+        text(0.99*xL(2),0.99*yL(2), ['Steps:', txt], 'HorizontalAlignment','right',...
+            'VerticalAlignment','top', 'FontSize', 30, 'Color', [1, 0, 0, 0])
+    end
     hold off
 end
