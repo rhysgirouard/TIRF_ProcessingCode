@@ -118,9 +118,12 @@ function updatePlot(src, event, sliderHandle, datapoints)
         otherwise
             disp('Unrecognized input')
     end
-    txt = num2str(data.pressedNums(sliderHandle.Value));
-    plotWithText(datapoints(1:newLim, sliderHandle.Value), sliderHandle.Value, txt, false);
-    guidata(src,data)
+
+    if isempty(event.Modifier)
+        txt = num2str(data.pressedNums(sliderHandle.Value));
+        plotWithText(datapoints(1:newLim, sliderHandle.Value), sliderHandle.Value, txt, false);
+        guidata(src,data)
+    end
 
     if quitting
         disp('closing and saving')
