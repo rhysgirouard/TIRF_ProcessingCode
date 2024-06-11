@@ -22,10 +22,10 @@ function [] = folderFigurePrepFxn(tifFolderPath)
         error('ERROR: No existing Stack file!')
     else
         % Specify the path to the saved .mat file
-        savedFilePath = fullfile(tifFolderPath, 'OriginalStack.mat');
+        OriginalStackPath = fullfile(tifFolderPath, 'OriginalStack.mat');
     
         % Load the variable from the file
-        SavedStack = load(savedFilePath);
+        SavedStack = load(OriginalStackPath);
     
         % Access the variable from the loaded data structure
         OriginalStack = SavedStack.OriginalStack;
@@ -91,5 +91,6 @@ function [] = folderFigurePrepFxn(tifFolderPath)
         moving_max_intensity(k,:) = mean(max_intensity_survival(k:k+w-1,:));
     end
     writematrix(avg_intensity_survival,fullfile(tifFolderPath, 'AvgIntesnitySurvivalData.csv'))
+    delete(OriginalStackPath)
 
 end

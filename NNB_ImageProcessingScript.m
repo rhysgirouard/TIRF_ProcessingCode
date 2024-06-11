@@ -22,6 +22,7 @@ while ~strcmp(answer,'Yes')
     end
 
 end
+%% 
 
 results_folder = append(inputFolder, '/Results');
 mkdir(results_folder)
@@ -34,8 +35,10 @@ if ismac
 else
     error('Unsupported OS')
 end
+%% 
 
 folderMakerFxn(results_folder)
+%% 
 
 if ismac
     callToTrackmate = append('code_folder=', codeFolder, '; fiji_path=',...
@@ -46,6 +49,7 @@ if ismac
 else
     error('Unsupported OS')
 end
+%% 
 
 folderFigureMakerFxn(results_folder, 1, 0, 1)
 

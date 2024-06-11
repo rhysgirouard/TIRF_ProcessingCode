@@ -1,13 +1,12 @@
-function interactiveTraceGenerator(folderPath)
+function interactiveTraceGenerator(folderPath, currentFigure)
 %interactiveTraceGenerator generates an interactive figure for the folder
 %   takes in a folderpath and uses the AvgIntensity data generated
 %   by tracePlotterOriginalFig to create a figure containg all the traces
 %   from the folder tif that can be covieniently labeled and zoomed
 
 csvFilePath = fullfile(folderPath,  'AvgIntesnitySurvivalData.csv');
-
+set(0,'CurrentFigure',currentFigure)
 avg_intensity_survival = readmatrix(csvFilePath);
-fig1 = figure;
 plot(avg_intensity_survival(:,1));
 slmin = 1;
 slmax = size (avg_intensity_survival,2);
@@ -31,21 +30,18 @@ else
     close(oldFig)
 end
 
-guidata(fig1,data)
+guidata(currentFigure,data)
 
-set(fig1, 'KeyPressFcn', @(src, event) updatePlot(src, event, hsl, avg_intensity_survival));
+set(currentFigure, 'KeyPressFcn', @(src, event) updatePlot(src, event, hsl, avg_intensity_survival));
 
 disp('finishing and saving')
-figFilePath = fullfile(folderPath, 'interactiveFig');
-savefig(figFilePath)
+
 
 NumberOfSteps = data.pressedNums;
 stepIDFilePath = fullfile(folderPath, 'stepIDs.csv');
 TraceNumber = (1:length(data.pressedNums)).';
 stepIDTable = table(TraceNumber, NumberOfSteps);
 writetable(stepIDTable, stepIDFilePath)
-
-close
 end
 
 

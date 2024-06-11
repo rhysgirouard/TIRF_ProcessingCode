@@ -21,17 +21,26 @@ disp(subfolderNames);
 
 % Loop through each subfolder and pass its file path to the external
 % functions
+figures = gobjects(1,numel(subfolderNames));
 for i = 1:numel(subfolderNames)
     subfolderPath = fullfile(tifFolderPath, subfolderNames(i));
     subfolderPathChar = convertStringsToChars(subfolderPath);
+    figures(i) = figure('visible', 'off');
     if exist('firstPass', 'var') && firstPass == 1
         folderFigurePrepFxn(subfolderPathChar)
     end
     if exist('originalFigs', 'var') && originalFigs == 1
         tracePlotterOirginalFig(subfolderPathChar);
     end
-    if exist('interactiveFigs', 'var') && interactiveFigs == 1
-        interactiveTraceGenerator(subfolderPathChar);
+    if exist('interactiveFigs', 'var') && interactiveFigs == 1        
+        interactiveTraceGenerator(subfolderPathChar, figures(i));
     end
 end
+
+for i = 1:numel(subfolderNames)
+    subfolderPath = fullfile(tifFolderPath, subfolderNames(i));
+    set(figures(i), 'visible', 'on');
+    figFilePath = fullfile(subfolderPath, 'interactiveFig');
+    savefig(figures(i), figFilePath)
+    close(figures(i))
 end

@@ -18,7 +18,7 @@ else
         uiwait(msgbox('Select the code folder in the following popup.'));
         codeFolder = uigetdir('/Documents/', 'Select the code folder');
         disp(codeFolder)
-        settingspath = append(codeFolder, "/TIRFprocessingSettings.mat");
+        settingspath = append(codeFolder, "/NNBprocessingSettings.mat");
         %request the spot size and quality threshold
         %Note that these are not currently used by the code
         prompt = {'Enter spot radius:','Enter quality th:'};
