@@ -38,6 +38,6 @@ Thumbs.db
 
 # Directory Specific Files #
 ############################
-TIRFprocessingSettings.mat
+NNBprocessingSettings.mat
 oldREADME.txt
 *.asv
