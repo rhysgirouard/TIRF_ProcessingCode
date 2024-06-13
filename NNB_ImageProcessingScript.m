@@ -7,7 +7,9 @@ elseif exist('NNBprocessingSettings.mat', 'file')  == 2
 end
 answer = '';
 while ~strcmp(answer,'Yes')
+    if ismac
     uiwait(msgbox('Select the input folder in the following popup.'));
+    end
     inputFolder = uigetdir('/Documents/', 'Select the input folder');
     if inputFolder == 0
         error('Execution canceled by folder selection dialog box')
@@ -26,14 +28,20 @@ end
 
 results_folder = append(inputFolder, '/Results');
 mkdir(results_folder)
+
 if ismac
+    bashPath = fullfile(codeFolder,'convertToTiffBash.sh');
     callToConvert = append('code_folder=', codeFolder, '; fiji_path=',...
         fijiPath, '; input_folder=', inputFolder,...
-        '; /bin/bash /Users/rhysg/Documents/YalePGRA/TIRF_ProcessingCode/convertToTiffBash.sh ',...
+        '; /bin/bash ', bashPath, ' ',...
         '$code_folder $fiji_path $input_folder');
     system(callToConvert)
-else
-    error('Unsupported OS')
+elseif ispc
+    pwshPath = fullfile(codeFolder, 'convertToTiffPwsh.ps1');
+    callToConvert = append('$code_folder=', codeFolder, '; $fiji_path=',...
+        fijiPath, '; $input_folder=', inputFolder,...
+        pwshPath, ' ',...
+        '-code_folder $code_folder -fiji_path $fiji_path -input_folder_var $input_folder');
 end
 %% 
 
