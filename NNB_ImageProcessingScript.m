@@ -35,14 +35,13 @@ if ismac
         fijiPath, '; input_folder=', inputFolder,...
         '; /bin/bash ', bashPath, ' ',...
         '$code_folder $fiji_path $input_folder');
-    system(callToConvert)
+    
 elseif ispc
     pwshPath = fullfile(codeFolder, 'convertToTiffPwsh.ps1');
-    callToConvert = append('$code_folder=', codeFolder, '; $fiji_path=',...
-        fijiPath, '; $input_folder=', inputFolder,...
-        pwshPath, ' ',...
-        '-code_folder $code_folder -fiji_path $fiji_path -input_folder_var $input_folder');
+    callToConvert = append('powershell -file ', pwshPath); 
 end
+
+system(callToConvert)
 %% 
 
 folderMakerFxn(results_folder)

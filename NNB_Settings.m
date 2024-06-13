@@ -1,17 +1,24 @@
 % This script is for intializing the settings for TIRF Processing
 
 %check if the user is on a system other than mac
-%get matlab path (might not need this
-matlabPath = append(matlabroot,'/bin/matlab');
+%get matlab path (might not need this)
+if ismac
+    matlabPath = append(matlabroot,'/bin/matlab');
+elseif ispc
+    matlabPath = fullfile(matlabroot, '\matlab.exe');
+end
 disp(matlabPath)
 userApproved = false;
 while ~userApproved
     %get fiji path from user
     if ismac
         uiwait(msgbox('Select the Fiji.app in the following popup.'));
+        [file, pathToFiji] = uigetfile('Fiji.app', 'Select the Fiji.app', '/Applications/');
+        fijiPath = append(pathToFiji, file, '/Contents/MacOS/ImageJ-macosx');
+    elseif ispc
+        [file, pathToFiji] = uigetfile('*.exe', 'Select the ImageJ-win64.exe', '\Downloads\');
+        fijiPath = append(pathToFiji, file);
     end
-    [file, pathToFiji] = uigetfile('Fiji.app', 'Select the Fiji.app', '/Applications/');
-    fijiPath = append(pathToFiji, file, '/Contents/MacOS/ImageJ-macosx');
     disp(fijiPath)
     %get code folder path from user
     if ismac
