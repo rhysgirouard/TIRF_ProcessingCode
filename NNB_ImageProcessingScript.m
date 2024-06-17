@@ -55,9 +55,8 @@ folderMakerFxn(results_folder)
 
 %% 
 clear -regexp ^(?!results_folder$).*
-
-pluginsPath = '/Applications/Fiji.app/plugins';
-javaaddpath(pluginsPath)
+load('NNBprocessingSettings.mat')
+javaaddpath(pluginsFolder)
 mijPath = fullfile(codeFolder, 'mij.jar');
 ijPath = fullfile(codeFolder, 'ij-1.54f.jar');
 javaaddpath(mijPath)

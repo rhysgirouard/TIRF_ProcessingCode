@@ -3,9 +3,9 @@
 %check if the user is on a system other than mac
 %get matlab path (might not need this)
 if ismac
-    matlabPath = append(matlabroot,'/bin/matlab');
+    matlabPath = fullfile(matlabroot,'/bin/matlab');
 elseif ispc
-    matlabPath = fullfile(matlabroot, '\matlab.exe');
+    matlabPath = fullfile(matlabroot, 'matlab.exe');
 end
 disp(matlabPath)
 userApproved = false;
@@ -14,13 +14,15 @@ while ~userApproved
     if ismac
         uiwait(msgbox('Select the Fiji.app in the following popup.'));
         [file, pathToFiji] = uigetfile('Fiji.app', 'Select the Fiji.app', '/Applications/');
-        fijiPath = append(pathToFiji, file, '/Contents/MacOS/ImageJ-macosx');
-        mijiPath = fullfile(pathToFiji, file, 'scripts');
+        fijiAppFolder = fullfile(pathToFiji, file);
+        fijiPath = fullfile(fijiAppFolder, '/Contents/MacOS/ImageJ-macosx');
     elseif ispc
         [file, pathToFiji] = uigetfile('*.exe', 'Select the ImageJ-win64.exe', '\Downloads\');
         fijiPath = fullfile(pathToFiji, file);
-        mijipath = fullfile(extractBefore(fijiPath,'ImageJ-win64.exe'), 'scripts');
+        fijiAppFolder = extractBefore(fijiPath,'\ImageJ-win64.exe');
     end
+    mijiPath = fullfile(fijiAppFolder, 'scripts');
+    pluginsFolder = fullfile(fijiAppFolder, 'plugins');
     disp(mijiPath)
     disp(fijiPath)
     
@@ -75,7 +77,8 @@ end
 
 %Maybe the code should check that these are valid
 %save the provided info to a .mat file with the matlab variables
-save(settingspath,"matlabPath","fijiPath","codeFolder","spot_radius","quality_threshold","mijipath")
+save(settingspath,"matlabPath","fijiPath","codeFolder","spot_radius",...
+    "quality_threshold","mijiPath", "pluginsFolder")
 addpath(codeFolder)
 addpath(mijiPath)
 savepath()
