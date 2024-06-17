@@ -3,9 +3,9 @@
 %check if the user is on a system other than mac
 %get matlab path (might not need this)
 if ismac
-    matlabPath = append(matlabroot,'/bin/matlab');
+    matlabPath = fullfile(matlabroot,'/bin/matlab');
 elseif ispc
-    matlabPath = fullfile(matlabroot, '\matlab.exe');
+    matlabPath = fullfile(matlabroot, 'matlab.exe');
 end
 disp(matlabPath)
 userApproved = false;
@@ -14,19 +14,25 @@ while ~userApproved
     if ismac
         uiwait(msgbox('Select the Fiji.app in the following popup.'));
         [file, pathToFiji] = uigetfile('Fiji.app', 'Select the Fiji.app', '/Applications/');
-        fijiPath = append(pathToFiji, file, '/Contents/MacOS/ImageJ-macosx');
+        fijiAppFolder = fullfile(pathToFiji, file);
+        fijiPath = fullfile(fijiAppFolder, '/Contents/MacOS/ImageJ-macosx');
     elseif ispc
         [file, pathToFiji] = uigetfile('*.exe', 'Select the ImageJ-win64.exe', '\Downloads\');
-        fijiPath = append(pathToFiji, file);
+        fijiPath = fullfile(pathToFiji, file);
+        fijiAppFolder = extractBefore(fijiPath,'\ImageJ-win64.exe');
     end
+    mijiPath = fullfile(fijiAppFolder, 'scripts');
+    pluginsFolder = fullfile(fijiAppFolder, 'plugins');
+    disp(mijiPath)
     disp(fijiPath)
+    
     %get code folder path from user
     if ismac
         uiwait(msgbox('Select the code folder in the following popup.'));
     end
     codeFolder = uigetdir('/Documents/', 'Select the code folder');
     disp(codeFolder)
-    settingspath = append(codeFolder, "/NNBprocessingSettings.mat");
+    settingspath = fullfile(codeFolder, "NNBprocessingSettings.mat");
     %request the spot size and quality threshold
     %Note that these are not currently used by the code
     prompt = {'Enter spot radius:','Enter quality th:'};
@@ -71,6 +77,8 @@ end
 
 %Maybe the code should check that these are valid
 %save the provided info to a .mat file with the matlab variables
-save(settingspath,"matlabPath","fijiPath","codeFolder","spot_radius","quality_threshold")
+save(settingspath,"matlabPath","fijiPath","codeFolder","spot_radius",...
+    "quality_threshold","mijiPath", "pluginsFolder")
 addpath(codeFolder)
+addpath(mijiPath)
 savepath()
