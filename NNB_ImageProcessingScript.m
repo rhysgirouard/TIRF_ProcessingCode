@@ -26,37 +26,67 @@ while ~strcmp(answer,'Yes')
 end
 %% 
 
-results_folder = append(inputFolder, '/Results');
+results_folder = fullfile(inputFolder, 'Results');
 mkdir(results_folder)
 
-if ismac
-    bashPath = fullfile(codeFolder,'convertToTiffBash.sh');
-    callToConvert = append('code_folder=', codeFolder, '; fiji_path=',...
-        fijiPath, '; input_folder=', inputFolder,...
-        '; /bin/bash ', bashPath, ' ',...
-        '$code_folder $fiji_path $input_folder');
-    system(callToConvert)
-elseif ispc
-    pwshPath = fullfile(codeFolder, 'convertToTiffPwsh.ps1');
-    callToConvert = append('$code_folder=', codeFolder, '; $fiji_path=',...
-        fijiPath, '; $input_folder=', inputFolder,...
-        pwshPath, ' ',...
-        '-code_folder $code_folder -fiji_path $fiji_path -input_folder_var $input_folder');
-end
-%% 
+mijPath = fullfile(codeFolder, 'mij.jar');
+ijPath = fullfile(codeFolder, 'ij-1.54f.jar');
+javaaddpath(mijPath)
+javaaddpath(ijPath)
 
+files = dir(inputFolder);
+filenames = {files.name};
+filenames = sort(filenames);
+ext = '.nd2';
+Miji(false)
+
+for i = 1:length(filenames)
+    filename = filenames{i};
+    % Check for file extension
+    if endsWith(filename, ext)
+        convertToTiff(inputFolder, results_folder, filename);
+    end
+end
+MIJ.exit;
+
+%% 
 folderMakerFxn(results_folder)
-%% 
 
-if ismac
-    callToTrackmate = append('code_folder=', codeFolder, '; fiji_path=',...
-        fijiPath, '; input_folder=', inputFolder,...
-        '; /bin/bash /Users/rhysg/Documents/YalePGRA/TIRF_ProcessingCode/trackmateBash.sh ',...
-        '$code_folder $fiji_path $input_folder');
-    system(callToTrackmate)
-else
-    error('Unsupported OS')
+%% 
+clear -regexp ^(?!results_folder$).*
+
+pluginsPath = '/Applications/Fiji.app/plugins';
+javaaddpath(pluginsPath)
+mijPath = fullfile(codeFolder, 'mij.jar');
+ijPath = fullfile(codeFolder, 'ij-1.54f.jar');
+javaaddpath(mijPath)
+javaaddpath(ijPath)
+% Initialize ImageJ-MATLAB
+ImageJ;
+
+% Get list of subfolders
+
+subfolders = dir(results_folder);
+
+for i = 1:length(subfolders)
+    if subfolders(i).isdir && ~startsWith(subfolders(i).name, '.')
+        subfolderPath = fullfile(results_folder, subfolders(i).name);
+        disp(['Processing subfolder: ' subfolders(i).name]);
+
+        % Get list of files in subfolder
+        files = dir(subfolderPath);
+
+        for j = 1:length(files)
+            if contains(files(j).name, '3frames.tif', 'IgnoreCase', true)
+                filePath = fullfile(subfolderPath, files(j).name);
+                disp(['Processing file: ' files(j).name]);
+                saveTrackStatisticsCSV(filePath, subfolderPath)
+            end
+        end
+    end
 end
+disp('Processing complete.');
+MIJ.exit
 %% 
 
 folderFigureMakerFxn(results_folder, 1, 0, 1)

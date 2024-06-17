@@ -12,7 +12,10 @@ while ~userApproved
     end
     [file, pathToFiji] = uigetfile('Fiji.app', 'Select the Fiji.app', '/Applications/');
     fijiPath = append(pathToFiji, file, '/Contents/MacOS/ImageJ-macosx');
+    mijiPath = fullfile(pathToFiji, file, 'scripts');
+    
     disp(fijiPath)
+    
     %get code folder path from user
     if ismac
         uiwait(msgbox('Select the code folder in the following popup.'));
@@ -66,4 +69,5 @@ end
 %save the provided info to a .mat file with the matlab variables
 save(settingspath,"matlabPath","fijiPath","codeFolder","spot_radius","quality_threshold")
 addpath(codeFolder)
+addpath(mijiPath)
 savepath()
