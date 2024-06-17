@@ -29,10 +29,26 @@ end
 results_folder = fullfile(inputFolder, 'Results');
 mkdir(results_folder)
 
+
 mijPath = fullfile(codeFolder, 'mij.jar');
 ijPath = fullfile(codeFolder, 'ij-1.54f.jar');
 javaaddpath(mijPath)
 javaaddpath(ijPath)
+
+% if ismac
+%     bashPath = fullfile(codeFolder,'convertToTiffBash.sh');
+%     callToConvert = append('code_folder=', codeFolder, '; fiji_path=',...
+%         fijiPath, '; input_folder=', inputFolder,...
+%         '; /bin/bash ', bashPath, ' ',...
+%         '$code_folder $fiji_path $input_folder');
+% 
+% elseif ispc
+%     pwshPath = fullfile(codeFolder, 'convertToTiffPwsh.ps1');
+%     callToConvert = append('powershell -file ', pwshPath); 
+% end
+% 
+% system(callToConvert)
+%% 
 
 files = dir(inputFolder);
 filenames = {files.name};
