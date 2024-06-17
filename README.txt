@@ -11,6 +11,12 @@ For the first time only:
 1. Determine the spot size and quality threshold for your data. You can do this by using trackMate on a representative acquisition. Lower quality thresholds are more likely to pick up background noise and auto fluorescent dust... 
     The defaults are a radius of 3 pixels and a quality of 50. You can determine what works best for you by previewing spot tracking in a manual Trackmate run.
     All data should be processed with the same settings.
+2. Add ImageJ-MATLAB to the your update site list in Fiji.(full instructions with pictures here: https://imagej.net/update-sites/following) 
+	a. Help>Update...
+	b. after fiji is updated in the ImageJ updater window select 'Manage Update Sites"
+	c. check the box next to the ImageJ-MATLAB site and close the Manage Update Sites window
+	d. Select Apply Changes
+	e. restart Fiji
 
 Before you run the code:
 1. Move the three channel image stacks to a separate folder. They confuse the code(these can be put back after figures have been generated)
