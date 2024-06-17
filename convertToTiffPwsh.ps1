@@ -1,7 +1,14 @@
-$code_folder = 'C:\Users\Rhys\GitHubFiles\TIRF_ProcessingCode'
-$fiji_path = 'C:\Users\Rhys\Downloads\fiji-win64\Fiji.app\ImageJ-win64'
 
-$input_folder_var = 'C:\Users\Rhys\exampleImage'
+Param (
+        [Parameter(Mandatory=$true)][string]$code_folder,
+        [Parameter(Mandatory=$true)][string]$fiji_path,
+        [Parameter(Mandatory=$true)][string]$input_folder_var
+)
+
+#$code_folder = 'C:\Users\Rhys\GitHubFiles\TIRF_ProcessingCode'
+#$fiji_path = 'C:\Users\Rhys\Downloads\fiji-win64\Fiji.app\ImageJ-win64'
+
+#$input_folder_var = 'C:\Users\Rhys\exampleImage'
 $results_folder="$input_folder_var`\Results"
 mkdir "$results_folder"
 
