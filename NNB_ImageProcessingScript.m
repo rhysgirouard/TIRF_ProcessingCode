@@ -90,4 +90,5 @@ MIJ.exit
 %% 
 
 folderFigureMakerFxn(results_folder, 1, 0, 1)
+clear
 

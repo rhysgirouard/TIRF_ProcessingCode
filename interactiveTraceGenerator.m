@@ -18,7 +18,7 @@ hsl = uicontrol('Style','slider','Min',slmin,'Max',slmax,...
 
 %check if the figure has previously been created or not  
 if exist(fullfile(folderPath, 'interactiveFig.fig'), 'file') == 0
-    data.pressedNums = zeros(slmax,1);
+    data.pressedNums = NaN(slmax,1);
 else
     oldFig = openfig(fullfile(folderPath, 'interactiveFig.fig'), 'invisible');
     oldData = guidata(oldFig);
@@ -65,7 +65,7 @@ function updatePlot(src, event, sliderHandle, datapoints)
     % Check which key was pressed
     switch keyPressed
         % IF a number is presssed record it and move to the next trace
-        case {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}
+        case {'0', '1', '2', '3', '4'}
             %additionally checks that a modifier key is not being pressed
             %such as command or shift; w/o this MATLAB reads command as 0
             if isempty(event.Modifier)
@@ -78,6 +78,8 @@ function updatePlot(src, event, sliderHandle, datapoints)
                     sliderHandle.Value = sliderValue+1;
                 end
             end
+        case { '5', '6', '7', '8', '9'}
+            disp('Identification of Traces with more than 4 steps is not supported')
         % When you want to zoom in on the start of the graph use a, s, d, f
         % for the range 1:100, 1:200, 1:300, all respectively
         case {'a'}
@@ -90,10 +92,16 @@ function updatePlot(src, event, sliderHandle, datapoints)
             newLim = 1500;
         %Use the arrowkeys to move b/w graphs without updating the steps
         case 'leftarrow'
+            if isnan(data.pressedNums(sliderValue)) 
+                data.pressedNums(sliderValue) = 0;
+            end
             if sliderValue > 1
                 sliderHandle.Value = sliderValue-1;
             end
         case 'rightarrow'
+            if isnan(data.pressedNums(sliderValue)) 
+                data.pressedNums(sliderValue) = 0;
+            end
             if sliderValue < numberOfTraces
                 sliderHandle.Value = sliderValue+1;
             end
@@ -124,6 +132,7 @@ function updatePlot(src, event, sliderHandle, datapoints)
     if quitting
         disp('closing and saving')
         savefig(src.FileName)
+        % saves a csv of the step identification(this csv is vestigial)
         stepIDFilePath = fullfile(folderPath, 'stepIDs.csv');
         TraceNumbers = transpose((1:length(data.pressedNums)));
         NumberOfSteps = data.pressedNums;
@@ -144,6 +153,9 @@ function plotWithText(yVals, traceNum, txt, withOverlay)
     xL=xlim;
     yL=ylim;
     title(['Trace #', num2str(traceNum)])
+    if strcmp(txt,'NaN') || strcmp(txt,'0')
+        txt = 'Uncounted';
+    end
     % Set the position where you want to place the text
     if withOverlay
         text(0.5*(xL(1)+xL(2)),0.5*(yL(1)+yL(2)), ['Steps:', txt], 'HorizontalAlignment','center',...
