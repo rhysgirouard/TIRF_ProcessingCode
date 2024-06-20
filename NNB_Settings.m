@@ -32,9 +32,8 @@ while ~userApproved
     end
     codeFolder = uigetdir('/Documents/', 'Select the code folder');
     disp(codeFolder)
-    settingspath = fullfile(codeFolder, "NNBprocessingSettings.mat");
+    
     %request the spot size and quality threshold
-    %Note that these are not currently used by the code
     prompt = {'Enter spot radius:','Enter quality th:'};
     dlgtitle = 'Input';
     fieldsize = [1 45; 1 45];
@@ -77,6 +76,7 @@ end
 
 %Maybe the code should check that these are valid
 %save the provided info to a .mat file with the matlab variables
+settingspath = fullfile(codeFolder, "NNBprocessingSettings.mat");
 save(settingspath,"matlabPath","fijiPath","codeFolder","spot_radius",...
     "quality_threshold","mijiPath", "pluginsFolder")
 addpath(codeFolder)

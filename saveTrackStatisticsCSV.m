@@ -1,4 +1,4 @@
-function saveTrackStatisticsCSV(imagePath, folderPath)
+function saveTrackStatisticsCSV(imagePath, folderPath, spotRadius, qualityThreshold)
 % runs Trackmate on the provided image and saves track statistics in the
 % folderPath. Requires ImageJ to be running and some javaaddapths
 
@@ -35,9 +35,9 @@ settings = Settings(imp);
 settings.detectorFactory = DogDetectorFactory();
 map = java.util.HashMap();
 map.put('DO_SUBPIXEL_LOCALIZATION', true);
-map.put('RADIUS', 3);
+map.put('RADIUS', spotRadius);
 map.put('TARGET_CHANNEL', Integer.valueOf(1)); % Needs to be an integer, otherwise TrackMate complaints.
-map.put('THRESHOLD', 50);
+map.put('THRESHOLD', qualityThreshold);
 map.put('DO_MEDIAN_FILTERING', true);
 settings.detectorSettings = map;
 % Configure tracker

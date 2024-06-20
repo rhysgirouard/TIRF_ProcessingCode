@@ -80,7 +80,7 @@ for i = 1:length(subfolders)
             if contains(files(j).name, '3frames.tif', 'IgnoreCase', true)
                 filePath = fullfile(subfolderPath, files(j).name);
                 disp(['Processing file: ' files(j).name]);
-                saveTrackStatisticsCSV(filePath, subfolderPath)
+                saveTrackStatisticsCSV(filePath, subfolderPath, spot_radius, quality_threshold)
             end
         end
     end
