@@ -5,6 +5,12 @@ if exist('NNBprocessingSettings.mat', 'file')  ~= 2
 elseif exist('NNBprocessingSettings.mat', 'file')  == 2 
    load('NNBprocessingSettings.mat')
 end
+
+disp('Settings Imported: ')
+disp(['Spot radius: ', num2str(spot_radius)])
+disp(['Quality threshold: ', num2str(quality_threshold)])
+disp(['Code folder: ', codeFolder])
+disp(['Fiji path: ', fijiPath])
 answer = '';
 while ~strcmp(answer,'Yes')
     if ismac
@@ -24,8 +30,14 @@ while ~strcmp(answer,'Yes')
     end
 
 end
+disp('--------------------')
+disp('Settings Initialized')
+disp('--------------------')
 %% 
-
+disp([newline, newline])
+disp('------------------------')
+disp('Converting .nd2s to .tif')
+disp('------------------------')
 results_folder = fullfile(inputFolder, 'Results');
 mkdir(results_folder)
 
@@ -49,11 +61,24 @@ for i = 1:length(filenames)
     end
 end
 MIJ.exit;
-
+disp('-------------------------')
+disp('Image Conversion Complete')
+disp('-------------------------')
 %% 
+disp([newline, newline])
+disp('------------------------------------')
+disp('Preparing image folders for tracking')
+disp('------------------------------------')
 folderMakerFxn(results_folder)
+disp('----------------------------------')
+disp('Image folders successfully created')
+disp('----------------------------------')
 
 %% 
+disp([newline, newline])
+disp('--------------------------')
+disp('Identifying spot locations')
+disp('--------------------------')
 clear -regexp ^(?!results_folder$).*
 load('NNBprocessingSettings.mat')
 javaaddpath(pluginsFolder)
@@ -85,10 +110,19 @@ for i = 1:length(subfolders)
         end
     end
 end
-disp('Processing complete.');
-MIJ.exit
-%% 
 
+MIJ.exit
+
+disp('----------------------------')
+disp('Spot Identification Complete')
+disp('----------------------------')
+%% 
+disp([newline, newline])
+disp('----------------')
+disp('Creating Figures')
+disp('----------------')
 folderFigureMakerFxn(results_folder, 1, 0, 1)
 clear
-
+disp('------------------------')
+disp('Figure Creation Complete')
+disp('------------------------')

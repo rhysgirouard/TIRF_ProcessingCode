@@ -2,7 +2,7 @@ function [] = convertToTiff(sourceDir, destinationDir, imageName)
 disp(['Processing: ', imageName]);
 
 % Opening the image
-disp(['Open image file: ', imageName]);
+disp(['Opening image file: ', imageName]);
 imagePath = fullfile(sourceDir, imageName);
 
 % Using MIJ to open the image with Bio-Formats
