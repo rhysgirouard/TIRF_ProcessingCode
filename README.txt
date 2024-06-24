@@ -2,43 +2,46 @@ README
 
 This code will process a folder of .nd2 images from the TIRF microscope and generate statistics and figures that track the intensity of light signal overtime as captured in the timelapse of the microscope. 
 
-WARNING: Any spaces in provided folder paths can break the code so make sure to change any problematic paths
-    Ex: Change /path/to/an example/file to path/to/an_example/file
+Requirements:
+Fiji and MATLAB
 
 INSTRUCTIONS:
 
 For the first time only:
-1. Determine the spot size and quality threshold for your data. You can do this by using trackMate on a representative acquisition. Lower quality thresholds are more likely to pick up background noise and auto fluorescent dust... 
-    The defaults are a radius of 3 pixels and a quality of 50. You can determine what works best for you by previewing spot tracking in a manual Trackmate run.
-    All data should be processed with the same settings.
-2. Add ImageJ-MATLAB to the your update site list in Fiji.(full instructions with pictures here: https://imagej.net/update-sites/following) 
+
+1. Add ImageJ-MATLAB to the your update site list in Fiji.(full instructions with pictures here: https://imagej.net/update-sites/following) 
 	a. Help>Update...
 	b. after fiji is updated in the ImageJ updater window select 'Manage Update Sites"
-	c. check the box next to the ImageJ-MATLAB site and close the Manage Update Sites window
+	c. check the box next to the ImageJ-MATLAB site
+	d. Select add update site
 	d. Select Apply Changes
 	e. restart Fiji
 
+2. Determine the spot size and quality threshold for your data. You can do this by using trackMate on a representative acquisition. Lower quality thresholds are more likely to pick up background noise and auto fluorescent dust etc. The defaults are a radius of 3 pixels and a quality of 50. You can determine what works best for you by previewing spot tracking in a manual Trackmate run. All data should be processed with the same settings. The best way to test this is as follows:
+	a. Place a representative timelapse acquisition in its own folder
+	b. Open MATLAB
+	c. Run the first section of NNB_ImageProcessingScript.m. Answer the popups. Use the default spot size and quality. Provide the above folder as the input folder
+	d. Run the second and third sections of NNB_ImageProcessingScript.m
+	e. In Fiji, open the file titled First3Frames.tif created in the sub-subfolder of the provided folder 
+	f. In the menubar go to Plugins>Tracking>Trackmate
+	g. In the Z/T Swapped popup select 'Yes'
+	h. Click Next without changing calibration or crop settings
+	i. Select DoG detector 
+	j. Activate 'Pre-process with median filter' and 'Sub-pixel localization'
+	k. Try different object diameters and quality thresholds and use Preview to see what is circled
+	l. repeat until you get settings where all spots are circled and no background noise is selected. 
+	m. Note down the quality and diameter that worked best(NOTE: the code asks for RADIUS so divide diameter by two)
+	n. Run NNB_Settings and answer popups
+	o. Proceed with counting.	
+
 Before you run the code:
 1. Move the three channel image stacks to a separate folder. They confuse the code(these can be put back after figures have been generated)
-2. Check that folder paths do not contain spaces as this will disrupt the code
-3. The code processes all the images in the folder together and so will finish with all the images at the same time. This means it can be better to process them in chunks so that you can start analyzing sooner.
-
-The following errors are not issues and can be ignored:
-
-    The operation couldn’t be completed. Unable to locate a Java Runtime that supports (null).
-    Please visit http://www.java.com for information on installing Java.
-    
-    Warning: the font "Times" is not available, so "Lucida Bright" has been substituted, but may have unexpected appearance or behavor. Re-enable the "Times" font to remove this warning.
-    
-    Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException...
-    
-    2024-03-21 12:22:13.045 MATLAB[12023:2449538] CoreText note: Client requested name ".SFNS-Regular", it will get TimesNewRomanPSMT rather than the intended font. All system UI font access should be through proper APIs such as CTFontCreateUIFontForLanguage() or +[NSFont systemFontOfSize:].
-    2024-03-21 12:22:13.045 MATLAB[12023:2449538] CoreText note: Set a breakpoint on CTFontLogSystemFontNameRequest to debug. 
+2. The code processes all the images in the folder together and so will finish with all the images at the same time. This means it can be better to process them in chunks so that you can start analyzing sooner.
 
 Every time you run the code:
 1. Open MATLAB
 
-2. Run NNB_ImageProcessingScript and follow all prompt pop-ups. The first time it is run it will ask for some additional information
+2. Run NNB_ImageProcessingScript and follow all prompt pop-ups. The first time it is run it will ask for some additional information. If this needs to be changed you can delete NNBprocessingSettings.mat or run NNB_Settings
 
 3. Wait for the program to finish in the background. Fiji will open images temporarily while it runs. You may need to switch to a different desktop to hide the Fiji pop-ups.
 
@@ -46,7 +49,7 @@ Every time you run the code:
 
 5. Open an interactiveFig.fig
 
-6. Use the number keys to ID a trace's number of steps. Pressing a number key will advance to the next trace. Using the left or right arrow keys will allow you to move through the traces without changing the assigned number of steps. The default number 0 indicates an uncounted trace. a,s,d keys will zoom in on the first 100,200,300 frames of the trace and the f key will return to the full view. You can also use the up and down arrow keys to zoom. 
+6. Use the number keys to ID a trace's number of steps. Pressing a number key will advance to the next trace. Using the left or right arrow keys will allow you to move through the traces without changing the assigned number of steps. The default number 0 indicates an uncounted/discarded trace. a,s,d keys will zoom in on the first 100,200,300 frames of the trace and the f key will return to the full view. You can also use the up and down arrow keys to increase or decrease the y range by 100. Increasing at the maximum will loop around to the minimum.
 
 7. If you use any other GUI components such as the zoom feature or the slider you must deselect that feature and click again on the graph to reactivate the keypress control.
 
