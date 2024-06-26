@@ -41,31 +41,33 @@ Before you run the code:
 Every time you run the code:
 1. Open MATLAB
 
-2. Run NNB_ImageProcessingScript and follow all prompt pop-ups. The first time it is run it will ask for some additional information. If this needs to be changed you can delete NNBprocessingSettings.mat or run NNB_Settings
+2. Run NNB_ImageProcessingScript and follow all prompt pop-ups. The first time it is run it will ask for some additional information. If this needs to be changed you can delete NNBprocessingSettings.mat before running the image processing script or run NNB_Settings.m separately
 
-3. Wait for the program to finish in the background. Fiji will open images temporarily while it runs. You may need to switch to a different desktop to hide the Fiji pop-ups.
+3. Wait for the program to finish in the background. When figures are being saved at the very end MATLAB will briefly steal focus.
 
 4. Group the image folders in results by sample conditions
 
 5. Open an interactiveFig.fig
 
-6. Use the number keys to ID a trace's number of steps. Pressing a number key will advance to the next trace. Using the left or right arrow keys will allow you to move through the traces without changing the assigned number of steps. The default number 0 indicates an uncounted/discarded trace. a,s,d keys will zoom in on the first 100,200,300 frames of the trace and the f key will return to the full view. You can also use the up and down arrow keys to increase or decrease the y range by 100. Increasing at the maximum will loop around to the minimum.
+6. Use the number keys to ID a trace's number of steps. Pressing a number key will advance to the next trace. Using the left or right arrow keys will allow you to move through the traces without changing the assigned number of steps. The number 0 indicates an uncounted/discarded trace. a, s, d keys will zoom in on the first 100, 200, 300 frames of the trace and the f key will return to the full view. You can also use the up and down arrow keys to increase or decrease the y range by 100. Increasing at the maximum will loop around to the minimum and vice versa.
 
-7. If you use any other GUI components such as the zoom feature or the slider you must deselect that feature and click again on the graph to reactivate the keypress control.
+7. If you use any other figure GUI components such as the zoom feature or the slider you must deselect that feature and click again on the graph to reactivate the keypress controls.
 
-8. Press the 'q' key to close and save the graph. If you do not press the q key entered data will not be saved to the .csv and will not be included in the counts later
+8. Press the 'q' key to close and save the graph. If you do not press the q key entered data will not be saved to the .csv and will not be included in the counts later (although the information is not lost you just must reopen the figure and press 'q'.)
 
 9. You can reopen and resume or update any figure at any time.
 
-10. Repeat steps 7-11 for all desired figures or until you have counted at least 1000 traces
+10. Repeat steps 7-9 for all desired figures or until you have identified steps in at least 1000 traces
 
 11. Group any uncounted figures into a subfolder so that they don't contribute to summary statistics
 
 12. Run tallySum('/path/to/sample') with the desired completed sample folder to create a .csv containing the totaled counts and approximated oligomer distribution from all .csv's in direct subfolders of the provided folder.
     Note that tallySum will count all figures in any subfolders of the given folder and thus will only provide useful information if folders have been grouped as instructed in steps 4 and 11
-    Also note that tallySum is run automatically on the 'q' keyPress described in step 8 but may need to be rerun if you want to exclude folders as in step 11 or regroup as in step 4
+    Also note that tallySum is run automatically on the 'q' keyPress described in step 8 but may need to be rerun if you want to update stats after you exclude folders as in step 11 or regroup as in step 4
 
 TroubleShooting:
 Common Errors:
-1. java.lang.OutOfMemoryError or similar out of memory error in the ImageJ portions of processing
-	This is a result of java being allotted only a small portion of RAM by default(~10% or your computer's total RAM) and needing ~800MB to store an image while processing it. This can be resolved by going to Preferences>General>Java Heap Memory and increasing the Java Heap Size.
+1. [WARNING] Could not set Look & Feel ''
+	You can safely ignore this warning
+2. java.lang.OutOfMemoryError or similar out of memory error in the ImageJ portions of processing
+	This is likely a result of java being allotted only a small portion of RAM by default(~10% or your computer's total RAM) and needing ~800MB to store an image while processing it. This can be resolved by going to Preferences>General>Java Heap Memory and increasing the Java Heap Size. More Info here: https://imagej.net/scripting/matlab#memory-issue
