@@ -1,30 +1,22 @@
 % This script is for intializing the settings for TIRF Processing
 
-%check if the user is on a system other than mac
-%get matlab path (might not need this)
-if ismac
-    matlabPath = fullfile(matlabroot,'/bin/matlab');
-elseif ispc
-    matlabPath = fullfile(matlabroot, 'matlab.exe');
-end
-disp(matlabPath)
 userApproved = false;
 while ~userApproved
     %get fiji path from user
     if ismac
         uiwait(msgbox('Select the Fiji.app in the following popup.'));
-        [file, pathToFiji] = uigetfile('Fiji.app', 'Select the Fiji.app', '/Applications/');
-        fijiAppFolder = fullfile(pathToFiji, file);
-        fijiPath = fullfile(fijiAppFolder, '/Contents/MacOS/ImageJ-macosx');
+        [fijiName, fijiAppPath] = uigetfile('Fiji.app', 'Select the Fiji.app', '/Applications/');
+        fijiPath = fullfile(fijiAppPath, fijiName);
     elseif ispc
-        [file, pathToFiji] = uigetfile('*.exe', 'Select the ImageJ-win64.exe', '\Downloads\');
-        fijiPath = fullfile(pathToFiji, file);
-        fijiAppFolder = extractBefore(fijiPath,'\ImageJ-win64.exe');
+        fijiPath = uigetdir('C:\Downloads\', 'Select the Fiji.app folder');
+        fijiPathPieces = split(fijiPath, filesep);
+        indexOfLastPiece = length(fijiPathPieces);
+        fijiName = fijiPathPieces(indexOfLastPiece);
     end
-    mijiPath = fullfile(fijiAppFolder, 'scripts');
-    pluginsFolder = fullfile(fijiAppFolder, 'plugins');
-    disp(mijiPath)
     disp(fijiPath)
+    if ~strcmp(fijiName, 'Fiji.app')
+            error(['Selected name (', fijiName, ') does not match Fiji.app'])
+    end
     
     %get code folder path from user
     if ismac
@@ -32,9 +24,15 @@ while ~userApproved
     end
     codeFolder = uigetdir('/Documents/', 'Select the code folder');
     disp(codeFolder)
+    codePathPieces = split(codeFolder, filesep);
+    indexOfLastPiece = length(codePathPieces);
+    codeFolderName = codePathPieces(indexOfLastPiece);
+    if ~(strcmp(codeFolderName, 'TIRF_ProcessingCode') || strcmp(codeFolderName,'TIRF_ProcessingCode-main'))
+            error(['Selected name (', codeFolderName, ') does not match TIRF_ProcessingCode(-main)'])
+    end
     
     %request the spot size and quality threshold
-    prompt = {'Enter spot radius:','Enter quality th:'};
+    prompt = {'Enter spot radius:','Enter quality threshold:'};
     dlgtitle = 'Input';
     fieldsize = [1 45; 1 45];
     definput = {'3','50'};
@@ -77,8 +75,7 @@ end
 %Maybe the code should check that these are valid
 %save the provided info to a .mat file with the matlab variables
 settingspath = fullfile(codeFolder, "NNBprocessingSettings.mat");
-save(settingspath,"matlabPath","fijiPath","codeFolder","spot_radius",...
-    "quality_threshold","mijiPath", "pluginsFolder")
+save(settingspath,"fijiPath","codeFolder","spot_radius",...
+    "quality_threshold")
 addpath(codeFolder)
-addpath(mijiPath)
 savepath()

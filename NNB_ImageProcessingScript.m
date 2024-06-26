@@ -30,11 +30,24 @@ while ~strcmp(answer,'Yes')
     end
 
 end
+
+scriptsPath = fullfile(fijiPath, 'scripts');
+addpath(scriptsPath)
+
+% % should make search for ij version rather than explicitly this
+% ijPath = fullfile(fijiPath, 'jars', 'ij-1.54f.jar');
+% bioformatsPath = fullfile(fijiPath, 'jars', 'bio-formats');
+% pluginsFolder = fullfile(fijiPath, 'plugins');
+% 
+% javaaddpath(ijPath)
+% javaaddpath(bioformatsPath)
+% javaaddpath(pluginsFolder)
+
 disp('--------------------')
 disp('Settings Initialized')
 disp('--------------------')
 %% 
-disp([newline, newline])
+disp(newline)
 disp('------------------------')
 disp('Converting .nd2s to .tif')
 disp('------------------------')
@@ -42,16 +55,14 @@ results_folder = fullfile(inputFolder, 'Results');
 mkdir(results_folder)
 
 
-mijPath = fullfile(codeFolder, 'mij.jar');
-ijPath = fullfile(codeFolder, 'ij-1.54f.jar');
-javaaddpath(mijPath)
-javaaddpath(ijPath)
 
 files = dir(inputFolder);
 filenames = {files.name};
 filenames = sort(filenames);
 ext = '.nd2';
-Miji(false)
+ImageJ;
+
+import ij.*
 
 for i = 1:length(filenames)
     filename = filenames{i};
@@ -60,12 +71,11 @@ for i = 1:length(filenames)
         convertToTiff(inputFolder, results_folder, filename);
     end
 end
-MIJ.exit;
 disp('-------------------------')
 disp('Image Conversion Complete')
 disp('-------------------------')
 %% 
-disp([newline, newline])
+disp(newline)
 disp('------------------------------------')
 disp('Preparing image folders for tracking')
 disp('------------------------------------')
@@ -75,49 +85,38 @@ disp('Image folders successfully created')
 disp('----------------------------------')
 
 %% 
-disp([newline, newline])
+disp(newline)
 disp('--------------------------')
 disp('Identifying spot locations')
 disp('--------------------------')
-clear -regexp ^(?!results_folder$).*
-load('NNBprocessingSettings.mat')
-javaaddpath(pluginsFolder)
-mijPath = fullfile(codeFolder, 'mij.jar');
-ijPath = fullfile(codeFolder, 'ij-1.54f.jar');
-javaaddpath(mijPath)
-javaaddpath(ijPath)
-% Initialize ImageJ-MATLAB
-ImageJ;
 
 % Get list of subfolders
-
 subfolders = dir(results_folder);
 
+%iterate through the list of files
 for i = 1:length(subfolders)
+    %Check the current filepath leads to a subfolder 
     if subfolders(i).isdir && ~startsWith(subfolders(i).name, '.')
         subfolderPath = fullfile(results_folder, subfolders(i).name);
         disp(['Processing subfolder: ' subfolders(i).name]);
+        filePath = fullfile(subfolderPath, 'First3frames.tif');
 
-        % Get list of files in subfolder
-        files = dir(subfolderPath);
-
-        for j = 1:length(files)
-            if contains(files(j).name, '3frames.tif', 'IgnoreCase', true)
-                filePath = fullfile(subfolderPath, files(j).name);
-                disp(['Processing file: ' files(j).name]);
-                saveTrackStatisticsCSV(filePath, subfolderPath, spot_radius, quality_threshold)
-            end
+        %Check that the First3Frames has already been created
+        if exist(filePath, "file") ~= 2
+            error([filePath, 'does not exist!'])
         end
+
+        saveTrackStatisticsCSV(filePath, subfolderPath, spot_radius, quality_threshold)
+
     end
 end
-
-MIJ.exit
+ij.IJ.run("Quit","");
 
 disp('----------------------------')
 disp('Spot Identification Complete')
 disp('----------------------------')
 %% 
-disp([newline, newline])
+disp(newline)
 disp('----------------')
 disp('Creating Figures')
 disp('----------------')
