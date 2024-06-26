@@ -18,7 +18,9 @@ if ~exist(destinationDir, 'dir')
 end
 % Saving the image
 disp(['Saving to: ', destinationDir]);
-savepath = fullfile(destinationDir, [imageName, '.tif']);
+
+newImageName = extractBefore(imageName, '.nd2');
+savepath = fullfile(destinationDir, [newImageName, '.tif']);
 fs = ij.io.FileSaver(imp);
 fs.saveAsTiff(savepath);
 
