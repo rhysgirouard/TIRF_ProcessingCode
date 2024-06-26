@@ -65,3 +65,7 @@ Every time you run the code:
     Note that tallySum will count all figures in any subfolders of the given folder and thus will only provide useful information if folders have been grouped as instructed in steps 4 and 11
     Also note that tallySum is run automatically on the 'q' keyPress described in step 8 but may need to be rerun if you want to exclude folders as in step 11 or regroup as in step 4
 
+TroubleShooting:
+Common Errors:
+1. java.lang.OutOfMemoryError or similar out of memory error in the ImageJ portions of processing
+	This is a result of java being allotted only a small portion of RAM by default(~10% or your computer's total RAM) and needing ~800MB to store an image while processing it. This can be resolved by going to Preferences>General>Java Heap Memory and increasing the Java Heap Size.
