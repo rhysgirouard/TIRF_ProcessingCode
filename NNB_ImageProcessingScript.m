@@ -1,5 +1,5 @@
 %This script provides a GUI for running the bash script
-
+clear
 if exist('NNBprocessingSettings.mat', 'file')  ~= 2
     NNB_Settings
 elseif exist('NNBprocessingSettings.mat', 'file')  == 2 
@@ -34,14 +34,8 @@ end
 scriptsPath = fullfile(fijiPath, 'scripts');
 addpath(scriptsPath)
 
-% % should make search for ij version rather than explicitly this
-% ijPath = fullfile(fijiPath, 'jars', 'ij-1.54f.jar');
-% bioformatsPath = fullfile(fijiPath, 'jars', 'bio-formats');
-% pluginsFolder = fullfile(fijiPath, 'plugins');
-% 
-% javaaddpath(ijPath)
-% javaaddpath(bioformatsPath)
-% javaaddpath(pluginsFolder)
+results_folder = fullfile(inputFolder, 'Results');
+mkdir(results_folder)
 
 disp('--------------------')
 disp('Settings Initialized')
@@ -51,8 +45,7 @@ disp(newline)
 disp('------------------------')
 disp('Converting .nd2s to .tif')
 disp('------------------------')
-results_folder = fullfile(inputFolder, 'Results');
-mkdir(results_folder)
+
 
 
 
@@ -121,7 +114,6 @@ disp('----------------')
 disp('Creating Figures')
 disp('----------------')
 folderFigureMakerFxn(results_folder, 1, 0, 1)
-clear
 disp('------------------------')
 disp('Figure Creation Complete')
 disp('------------------------')
