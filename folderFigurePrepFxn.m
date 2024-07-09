@@ -9,8 +9,7 @@ function [] = folderFigurePrepFxn(tifFolderPath)
     mCrop = 400;
     nImage = 512;
     mImage = 512;
-    NumberImages = 1500;
-    
+        
     %Check folder has all necessary contents:
     contents = dir(tifFolderPath);
     fileNames = {contents.name};
@@ -32,6 +31,8 @@ function [] = folderFigurePrepFxn(tifFolderPath)
     
     end
     
+    NumberImages = size(OriginalStack,3);
+
     
     
     tracks_file = fullfile(tifFolderPath,'Track statistics.csv');

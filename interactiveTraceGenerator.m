@@ -89,7 +89,7 @@ function updatePlot(src, event, sliderHandle, datapoints)
         case {'d'}
             newLim = 300;
         case {'f'}
-            newLim = 1500;
+            newLim = size(datapoints,1);
         %Use the arrowkeys to move b/w graphs without updating the steps
         case 'leftarrow'
             if isnan(data.pressedNums(sliderValue)) 
