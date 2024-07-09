@@ -1,5 +1,9 @@
-%This script provides a GUI for running the bash script
+%Converts the input folder of nd2s into figures for manual step counting. 
 clear
+
+%Set settings if they haven't previously been set or load them if they have
+%NOTE: old settings must be deleted or NNB_Settings must be run separately 
+% to change the settings or after updating the code.
 if exist('NNBprocessingSettings.mat', 'file')  ~= 2
     NNB_Settings
 elseif exist('NNBprocessingSettings.mat', 'file')  == 2 
