@@ -22,9 +22,12 @@ import fiji.plugin.trackmate.gui.displaysettings.DisplaySettings;
 % Open the image
 imp = IJ.openImage(imagePath);
 
-% Swap Z and T dimensions
+
 dims = imp.getDimensions();
-imp.setDimensions(dims(3), dims(5), dims(4));
+% Swap Z(slices) and T(frames) dimensions if more slices than frames.
+if dims(4) > dims(5)
+    imp.setDimensions(dims(3), dims(5), dims(4));
+end
 
 % Create model and settings
 model = Model();
