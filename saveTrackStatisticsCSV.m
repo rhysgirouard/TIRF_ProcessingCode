@@ -1,6 +1,11 @@
 function saveTrackStatisticsCSV(imagePath, folderPath, spotRadius, qualityThreshold)
-% runs Trackmate on the provided image and saves track statistics in the
-% folderPath. Requires ImageJ to be running and some javaaddapths
+%saveTrackStatisticsCSV runs Trackmate on the provided image and saves the
+%track statistics in the folderPath. Requires ImageJ to be running
+%   Takes in an imagePath and runs a motion tracking promgram called
+%   Trackmate in order to generate a csv of the spot locations in the 
+%   provided folderPath. spotRadius determines what size spots Trackmate
+%   looks for and qualityThreshold determines the minimum quality of spots
+%   used for tracking. 
 
 
 

@@ -35,6 +35,7 @@ while ~strcmp(answer,'Yes')
 
 end
 
+%add the scripts folder to the path so matlab knows where ImageJ script is
 scriptsPath = fullfile(fijiPath, 'scripts');
 addpath(scriptsPath)
 
@@ -49,9 +50,6 @@ disp(newline)
 disp('------------------------')
 disp('Converting .nd2s to .tif')
 disp('------------------------')
-
-
-
 
 files = dir(inputFolder);
 filenames = {files.name};
@@ -102,7 +100,7 @@ for i = 1:length(subfolders)
         if exist(filePath, "file") ~= 2
             error([filePath, 'does not exist!'])
         end
-
+        %Generate track statistics 
         saveTrackStatisticsCSV(filePath, subfolderPath, spot_radius, quality_threshold)
 
     end
@@ -117,7 +115,10 @@ disp(newline)
 disp('----------------')
 disp('Creating Figures')
 disp('----------------')
-folderFigureMakerFxn(results_folder, 1, 0, 1)
+firstPass = 1;
+originalFigs = 0;
+interactiveFigs = 1;
+folderFigureMakerFxn(results_folder, firstPass, originalFigs, interactiveFigs)
 disp('------------------------')
 disp('Figure Creation Complete')
 disp('------------------------')

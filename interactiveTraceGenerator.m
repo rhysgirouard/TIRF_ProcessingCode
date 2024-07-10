@@ -34,7 +34,7 @@ guidata(currentFigure,data)
 
 set(currentFigure, 'KeyPressFcn', @(src, event) updatePlot(src, event, hsl, avg_intensity_survival));
 
-disp('finishing and saving')
+
 
 
 NumberOfSteps = data.pressedNums;
@@ -42,10 +42,12 @@ stepIDFilePath = fullfile(folderPath, 'stepIDs.csv');
 TraceNumber = (1:length(data.pressedNums)).';
 stepIDTable = table(TraceNumber, NumberOfSteps);
 writetable(stepIDTable, stepIDFilePath)
+disp([extracAfter(folderPath,'Results/'), ' figure created'])
 end
 
 
 function updatePlot(src, event, sliderHandle, datapoints)
+%updatePlot updates the figure(src) based on the  key pressed  
 
     %Read in the array to track the step IDs
     data = guidata(src);
@@ -146,7 +148,8 @@ end
 
 function plotWithText(yVals, traceNum, txt, withOverlay)
 %plotWithText plots a figure with the txt displayed in the top right and
-%the Trace # above the graph.
+%the Trace # above the graph. When withOverlay is true text is displayed on
+%top of the figure instead of the top right
     plot(yVals)
     xlim([1 length(yVals)])
     hold on;

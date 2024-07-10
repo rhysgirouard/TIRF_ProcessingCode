@@ -1,8 +1,8 @@
 function [] = folderMakerFxn(folderPath)
 %folderMakerFxn creates subfolder for each tif file and generates the tif files for spot identification
 %   Takes in a folder containing the tif files obtained from the microscope
-%   and creates a subfolder for each containing the tif file, a
-%   OriginalStack.mat file, and a First3Frames.tif fime that can be
+%   and creates a subfolder for each image containing the tif file, a
+%   OriginalStack.mat file, and a First3Frames.tif file that can be
 %   processed in Fiji to generate a Track Statistics.csv file for obtaining
 %   locations for all spots.
     

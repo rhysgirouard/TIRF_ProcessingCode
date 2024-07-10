@@ -19,12 +19,16 @@ subfolderNames = string(subfolderNames);
 disp('Subfolders in the current directory:');
 disp(subfolderNames);
 
+
+figures = gobjects(1,numel(subfolderNames));
 % Loop through each subfolder and pass its file path to the external
 % functions
-figures = gobjects(1,numel(subfolderNames));
 for i = 1:numel(subfolderNames)
     subfolderPath = fullfile(tifFolderPath, subfolderNames(i));
     subfolderPathChar = convertStringsToChars(subfolderPath);
+
+    % make the figure invisible so that MATLAB doesn't steal focus when
+    % editing the figures
     figures(i) = figure('visible', 'off');
     if exist('firstPass', 'var') && firstPass == 1
         folderFigurePrepFxn(subfolderPathChar)
@@ -37,6 +41,8 @@ for i = 1:numel(subfolderNames)
     end
 end
 
+% make the figures visbile before saving so that you can see them when
+% opening them later
 for i = 1:numel(subfolderNames)
     subfolderPath = fullfile(tifFolderPath, subfolderNames(i));
     set(figures(i), 'visible', 'on');

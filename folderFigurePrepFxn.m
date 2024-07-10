@@ -23,7 +23,7 @@ function [] = folderFigurePrepFxn(tifFolderPath)
         % Specify the path to the saved .mat file
         OriginalStackPath = fullfile(tifFolderPath, 'OriginalStack.mat');
     
-        % Load the variable from the file
+        % Load the data structure from the file
         SavedStack = load(OriginalStackPath);
     
         % Access the variable from the loaded data structure
@@ -36,8 +36,8 @@ function [] = folderFigurePrepFxn(tifFolderPath)
     
     
     tracks_file = fullfile(tifFolderPath,'Track statistics.csv');
-    [tracks_data, tracks_result]= readtext(tracks_file, '[,\t]', '=', '[]', 'numeric-empty2zero');
-    [tracks_text_data, tracks_text_result]= readtext(tracks_file, '[,\t]', '=', '[]', 'textual');
+    [tracks_data, ~]= readtext(tracks_file, '[,\t]', '=', '[]', 'numeric-empty2zero');
+    [tracks_text_data, ~]= readtext(tracks_file, '[,\t]', '=', '[]', 'textual');
     tracks_firstrow = tracks_text_data(1,:);
     track_x_location_index = find(ismember(tracks_firstrow,'TRACK_X_LOCATION'));
     track_y_location_index = find(ismember(tracks_firstrow,'TRACK_Y_LOCATION'));
@@ -46,11 +46,11 @@ function [] = folderFigurePrepFxn(tifFolderPath)
     xy_coordinates = round(xy_coordinates);
     
     % Define 5x5 roi centered at each particle coordinate
-    roi_size = 5 % in pixels *USER INPUT*
+    roi_size = 5; % in pixels 
     n_particle = size(xy_coordinates,1);
-    %  roi_x_edge = zeros(1,n_particle);
-    %  roi_y_edge = zeros(1,n_particle);
-    %  roi = zeros{1,n_particle};
+    roi_x_edge = zeros(1,n_particle);
+    roi_y_edge = zeros(1,n_particle);
+    roi = cell(NumberImages,n_particle);
     
     % define edge of roi for each particle
     for i=1:n_particle
@@ -58,7 +58,6 @@ function [] = folderFigurePrepFxn(tifFolderPath)
         roi_y_edge(i) = xy_coordinates(i,2)-((roi_size-1)/2)+1;
     end
     
-    %
     % acquire avg and max intensity of each particle in every frame
     nCropLeft=nImage-nCrop+1;
     for j=1:NumberImages
@@ -68,7 +67,7 @@ function [] = folderFigurePrepFxn(tifFolderPath)
                 max_intensity(j,i) = max(max(roi{j,i})); % mean in colum direction and then row direction
                 avr_intensity(j,i) = mean(mean(roi{j,i},1)); % mean in colum direction and then row direction
             else
-                roi{j,i} = 0; %OriginalStack(roi_y_edge(i):roi_y_edge(i)+roi_size-1,roi_x_edge(i):roi_x_edge(i)+roi_size-1,j);
+                roi{j,i} = 0; 
                 avr_intensity(j,i) = 0;
                 max_intensity(j,i) = 0;
             end
@@ -79,18 +78,20 @@ function [] = folderFigurePrepFxn(tifFolderPath)
     survival_avg_traces = avr_intensity(1,:) > 0;
     avg_intensity_survival = avr_intensity(:,survival_avg_traces);
     
-    survival_max_traces = max_intensity(1,:) > 0;
-    max_intensity_survival = max_intensity(:,survival_max_traces);
-    
-    % take avr. intensity with moving wondow
-    w = 3; % moving window size **USER INPUT**
-    for k=1:NumberImages-w-1
-        moving_avg_intensity(k,:) = mean(avg_intensity_survival(k:k+w-1,:));
-    end
-    
-    for k=1:NumberImages-w-1
-        moving_max_intensity(k,:) = mean(max_intensity_survival(k:k+w-1,:));
-    end
+    % survival_max_traces = max_intensity(1,:) > 0;
+    % max_intensity_survival = max_intensity(:,survival_max_traces);
+    % 
+    % % take avr. intensity with moving wondow
+    % w = 3; % moving window size **USER INPUT**
+    % for k=1:NumberImages-w-1
+    %     moving_avg_intensity(k,:) = mean(avg_intensity_survival(k:k+w-1,:));
+    % end
+    % 
+    % for k=1:NumberImages-w-1
+    %     moving_max_intensity(k,:) = mean(max_intensity_survival(k:k+w-1,:));
+    % end
+
+    % Save the trace data into a csv
     writematrix(avg_intensity_survival,fullfile(tifFolderPath, 'AvgIntesnitySurvivalData.csv'))
     delete(OriginalStackPath)
 
