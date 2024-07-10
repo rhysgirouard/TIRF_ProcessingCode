@@ -1,5 +1,5 @@
-function [] = folderMakerFxn(folderPath)
-%folderMakerFxn creates subfolder for each tif file and generates the tif files for spot identification
+function [] = batchCreateImageFolders(folderPath)
+%batchCreateImageFolders creates subfolder for each tif file and generates the tif files for spot identification
 %   Takes in a folder containing the tif files obtained from the microscope
 %   and creates a subfolder for each image containing the tif file, a
 %   OriginalStack.mat file, and a First3Frames.tif file that can be
@@ -27,7 +27,7 @@ function [] = folderMakerFxn(folderPath)
             disp(['Subfolder created for ', tifFileNames(i)]);
             movefile(fullPathCurrentTif, subfolderPath)
             newFilePath = fullfile(subfolderPath, tifFileNames(i));
-            [~, ~, OriginalStack] = firstFramesGenerator(newFilePath);
+            [~, ~, OriginalStack] = generateFirstFramesProjection(newFilePath);
             save(fullfile(subfolderPath, 'OriginalStack.mat'), 'OriginalStack')
         end
     end

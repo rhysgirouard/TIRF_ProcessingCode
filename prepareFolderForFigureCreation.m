@@ -1,5 +1,5 @@
-function [] = folderFigurePrepFxn(tifFolderPath)
-%folderFigurePrepFxn prepares a folder for figure generation
+function [] = prepareFolderForFigureCreation(tifFolderPath)
+%prepareFolderForFigureCreation prepares a folder for figure generation
 %   takes a folderpath to a folder that has been prepared with an
 %   OriginalStack.mat and TrackStatistics.csv and generates the arrays
 %   containing the data for all relevant traces for future figure

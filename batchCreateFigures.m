@@ -1,5 +1,5 @@
-function [] = folderFigureMakerFxn(tifFolderPath, firstPass, originalFigs, interactiveFigs)
-%folderFigureMakerFxn creates figures for each of the prepared folders 
+function [] = batchCreateFigures(tifFolderPath, firstPass, originalFigs, interactiveFigs)
+%batchCreateFigures creates figures for each of the prepared folders 
 %   goes through the subfolders in the given folder and creates figures
 %   containing the intensity over time graphs for all spots identified in
 %   the respective timelapse. If firstPass is 1 it will preprocess; if
@@ -31,13 +31,13 @@ for i = 1:numel(subfolderNames)
     % editing the figures
     figures(i) = figure('visible', 'off');
     if exist('firstPass', 'var') && firstPass == 1
-        folderFigurePrepFxn(subfolderPathChar)
+        prepareFolderForFigureCreation(subfolderPathChar)
     end
     if exist('originalFigs', 'var') && originalFigs == 1
         tracePlotterOirginalFig(subfolderPathChar);
     end
     if exist('interactiveFigs', 'var') && interactiveFigs == 1        
-        interactiveTraceGenerator(subfolderPathChar, figures(i));
+        createInteractiveFigure(subfolderPathChar, figures(i));
     end
 end
 

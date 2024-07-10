@@ -74,7 +74,7 @@ disp(newline)
 disp('------------------------------------')
 disp('Preparing image folders for tracking')
 disp('------------------------------------')
-folderMakerFxn(results_folder)
+batchCreateImageFolders(results_folder)
 disp('----------------------------------')
 disp('Image folders successfully created')
 disp('----------------------------------')
@@ -118,7 +118,7 @@ disp('----------------')
 firstPass = 1;
 originalFigs = 0;
 interactiveFigs = 1;
-folderFigureMakerFxn(results_folder, firstPass, originalFigs, interactiveFigs)
+batchCreateFigures(results_folder, firstPass, originalFigs, interactiveFigs)
 disp('------------------------')
 disp('Figure Creation Complete')
 disp('------------------------')

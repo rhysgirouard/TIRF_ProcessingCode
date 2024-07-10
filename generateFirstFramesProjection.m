@@ -1,5 +1,5 @@
-function [nImage, NumberImages, OriginalStack] = firstFramesGenerator(tifFilePath)
-%firstFramesGenerator preloads the image and generates a Z-projection for tracking
+function [nImage, NumberImages, OriginalStack] = generateFirstFramesProjection(tifFilePath)
+%generateFirstFramesProjection preloads the image and generates a Z-projection for tracking
 %   Loads in the image as a 3D uint16 array for future use and then sums
 %   the first 3 frames together to create a background "averaged" image for
 %   use in tracking. The image for tracking needs to have multiple frames

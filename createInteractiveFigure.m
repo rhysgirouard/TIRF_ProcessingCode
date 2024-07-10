@@ -1,5 +1,5 @@
-function interactiveTraceGenerator(folderPath, currentFigure)
-%interactiveTraceGenerator generates an interactive figure for the folder
+function createInteractiveFigure(folderPath, currentFigure)
+%createInteractiveFigure generates an interactive figure for the folder
 %   takes in a folderpath and uses the AvgIntensity data generated
 %   by tracePlotterOriginalFig to create a figure containg all the traces
 %   from the folder tif that can be covieniently labeled and zoomed
