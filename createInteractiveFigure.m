@@ -1,6 +1,6 @@
 function createInteractiveFigure(folderPath, currentFigure)
 %createInteractiveFigure generates an interactive figure for the folder
-%   takes in a folderpath and uses the AvgIntensity data generated
+%   Takes in a folderpath and uses the AvgIntensity data generated
 %   by tracePlotterOriginalFig to create a figure containg all the traces
 %   from the folder tif that can be covieniently labeled and zoomed
 
@@ -42,7 +42,7 @@ stepIDFilePath = fullfile(folderPath, 'stepIDs.csv');
 TraceNumber = (1:length(data.pressedNums)).';
 stepIDTable = table(TraceNumber, NumberOfSteps);
 writetable(stepIDTable, stepIDFilePath)
-disp([extracAfter(folderPath,'Results/'), ' figure created'])
+disp([extractAfter(folderPath,'Results/'), ' figure created'])
 end
 
 
