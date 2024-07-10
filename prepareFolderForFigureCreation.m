@@ -1,4 +1,4 @@
-function [] = prepareFolderForFigureCreation(tifFolderPath)
+function [] = prepareFolderForFigureCreation(tifFolderPath, OriginalStack)
 %prepareFolderForFigureCreation prepares a folder for figure generation
 %   takes a folderpath to a folder that has been prepared with an
 %   OriginalStack.mat and TrackStatistics.csv and generates the arrays
@@ -9,32 +9,8 @@ function [] = prepareFolderForFigureCreation(tifFolderPath)
     mCrop = 400;
     nImage = 512;
     mImage = 512;
-        
-    %Check folder has all necessary contents:
-    contents = dir(tifFolderPath);
-    fileNames = {contents.name};
-    
-    if ~ismember(fileNames, 'Track statistics.csv')
-        error('There is no Track statistics.csv file')
-    end
-    if ~ismember(fileNames, 'OriginalStack.mat')
-        error('ERROR: No existing Stack file!')
-    else
-        % Specify the path to the saved .mat file
-        OriginalStackPath = fullfile(tifFolderPath, 'OriginalStack.mat');
-    
-        % Load the data structure from the file
-        SavedStack = load(OriginalStackPath);
-    
-        % Access the variable from the loaded data structure
-        OriginalStack = SavedStack.OriginalStack;
-    
-    end
-    
     NumberImages = size(OriginalStack,3);
 
-    
-    
     tracks_file = fullfile(tifFolderPath,'Track statistics.csv');
     [tracks_data, ~]= readtext(tracks_file, '[,\t]', '=', '[]', 'numeric-empty2zero');
     [tracks_text_data, ~]= readtext(tracks_file, '[,\t]', '=', '[]', 'textual');
@@ -93,6 +69,5 @@ function [] = prepareFolderForFigureCreation(tifFolderPath)
 
     % Save the trace data into a csv
     writematrix(avg_intensity_survival,fullfile(tifFolderPath, 'AvgIntesnitySurvivalData.csv'))
-    delete(OriginalStackPath)
 
 end

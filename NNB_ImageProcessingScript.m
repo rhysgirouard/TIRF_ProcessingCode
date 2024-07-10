@@ -46,79 +46,47 @@ disp('--------------------')
 disp('Settings Initialized')
 disp('--------------------')
 %% 
-disp(newline)
-disp('------------------------')
-disp('Converting .nd2s to .tif')
-disp('------------------------')
 
-files = dir(inputFolder);
+ext = '*.nd2';
+files = dir(fullfile(inputFolder,ext));
 filenames = {files.name};
 filenames = sort(filenames);
-ext = '.nd2';
 ImageJ;
 
 import ij.*
 
-for i = 1:length(filenames)
-    filename = filenames{i};
-    % Check for file extension
-    if endsWith(filename, ext)
-        convertToTiff(inputFolder, results_folder, filename);
-    end
+figures = gobjects(1,numel(filenames));
+
+for index = 1:length(filenames)
+    currentfilename = filenames{index};
+    imageName = extractBefore(currentfilename, '.nd2');
+    subFolderPath = fullfile(results_folder, imageName);
+    mkdir(subFolderPath);
+    convertToTiff(inputFolder, subFolderPath, currentfilename);
+
+    tifFilePath = fullfile(subFolderPath, [imageName, '.tif']);
+
+    [~, ~, OriginalStack] = generateFirstFramesProjection(tifFilePath);
+    firstFramesProjection = fullfile(subFolderPath, 'First3frames.tif');
+    saveTrackStatisticsCSV(firstFramesProjection, subFolderPath, spot_radius, quality_threshold)
+    
+
+    prepareFolderForFigureCreation(subFolderPath, OriginalStack)
+
+    % create the figure and mae it invisible so that MATLAB doesn't steal 
+    % focus when editing the figures
+    figures(index) = figure('visible', 'off');
+    createInteractiveFigure(subFolderPath, figures(index));
+
 end
-disp('-------------------------')
-disp('Image Conversion Complete')
-disp('-------------------------')
-%% 
-disp(newline)
-disp('------------------------------------')
-disp('Preparing image folders for tracking')
-disp('------------------------------------')
-batchCreateImageFolders(results_folder)
-disp('----------------------------------')
-disp('Image folders successfully created')
-disp('----------------------------------')
 
-%% 
-disp(newline)
-disp('--------------------------')
-disp('Identifying spot locations')
-disp('--------------------------')
-
-% Get list of subfolders
-subfolders = dir(results_folder);
-
-%iterate through the list of files
-for i = 1:length(subfolders)
-    %Check the current filepath leads to a subfolder 
-    if subfolders(i).isdir && ~startsWith(subfolders(i).name, '.')
-        subfolderPath = fullfile(results_folder, subfolders(i).name);
-        disp(['Processing subfolder: ' subfolders(i).name]);
-        filePath = fullfile(subfolderPath, 'First3frames.tif');
-
-        %Check that the First3Frames has already been created
-        if exist(filePath, "file") ~= 2
-            error([filePath, 'does not exist!'])
-        end
-        %Generate track statistics 
-        saveTrackStatisticsCSV(filePath, subfolderPath, spot_radius, quality_threshold)
-
-    end
+for i = 1:numel(filenames)
+    imageName = extractBefore(currentfilename, '.nd2');
+    subFolderPath = fullfile(results_folder, imageName);
+    set(figures(i), 'visible', 'on');
+    figFilePath = fullfile(subFolderPath, 'interactiveFig');
+    savefig(figures(i), figFilePath)
+    close(figures(i))
 end
+
 ij.IJ.run("Quit","");
-
-disp('----------------------------')
-disp('Spot Identification Complete')
-disp('----------------------------')
-%% 
-disp(newline)
-disp('----------------')
-disp('Creating Figures')
-disp('----------------')
-firstPass = 1;
-originalFigs = 0;
-interactiveFigs = 1;
-batchCreateFigures(results_folder, firstPass, originalFigs, interactiveFigs)
-disp('------------------------')
-disp('Figure Creation Complete')
-disp('------------------------')
