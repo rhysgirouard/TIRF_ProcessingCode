@@ -34,6 +34,7 @@ while ~strcmp(answer,'Yes')
     end
 
 end
+inputFolder = '/Users/rhysg/Documents/YalePGRA/CodeTestFolder/inputImages';
 
 %add the scripts folder to the path so matlab knows where ImageJ script is
 scriptsPath = fullfile(fijiPath, 'scripts');
@@ -73,7 +74,7 @@ for index = 1:length(filenames)
 
     prepareFolderForFigureCreation(subFolderPath, OriginalStack)
 
-    % create the figure and mae it invisible so that MATLAB doesn't steal 
+    % create the figure and make it invisible so that MATLAB doesn't steal 
     % focus when editing the figures
     figures(index) = figure('visible', 'off');
     createInteractiveFigure(subFolderPath, figures(index));
