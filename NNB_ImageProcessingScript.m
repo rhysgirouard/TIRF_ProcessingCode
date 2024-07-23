@@ -90,6 +90,7 @@ end
 
 % make all the firgures visible for future use
 for i = 1:numel(filenames)
+    currentfilename = filenames{i};
     imageName = extractBefore(currentfilename, '.nd2');
     subFolderPath = fullfile(results_folder, imageName);
     set(figures(i), 'visible', 'on');
