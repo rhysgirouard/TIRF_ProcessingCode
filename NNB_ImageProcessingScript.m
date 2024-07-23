@@ -34,7 +34,6 @@ while ~strcmp(answer,'Yes')
     end
 
 end
-inputFolder = '/Users/rhysg/Documents/YalePGRA/CodeTestFolder/inputImages';
 
 %add the scripts folder to the path so matlab knows where ImageJ script is
 scriptsPath = fullfile(fijiPath, 'scripts');
@@ -48,39 +47,48 @@ disp('Settings Initialized')
 disp('--------------------')
 %% 
 
+% I should probably put this somewhere else (as a setting?)
 ext = '*.nd2';
+
+% Get the list of files with the correct extension in the provided folder
 files = dir(fullfile(inputFolder,ext));
 filenames = {files.name};
 filenames = sort(filenames);
-ImageJ;
 
+% Start ImageJ for image analysis
+ImageJ;
 import ij.*
 
+% create the array of figures so that we can loop through them at the end
 figures = gobjects(1,numel(filenames));
 
+% Process each image
 for index = 1:length(filenames)
     currentfilename = filenames{index};
     imageName = extractBefore(currentfilename, '.nd2');
     subFolderPath = fullfile(results_folder, imageName);
     mkdir(subFolderPath);
+
     convertToTiff(inputFolder, subFolderPath, currentfilename);
 
     tifFilePath = fullfile(subFolderPath, [imageName, '.tif']);
 
     [~, ~, OriginalStack] = generateFirstFramesProjection(tifFilePath);
     firstFramesProjection = fullfile(subFolderPath, 'First3frames.tif');
+
     saveTrackStatisticsCSV(firstFramesProjection, subFolderPath, spot_radius, quality_threshold)
     
-
     prepareFolderForFigureCreation(subFolderPath, OriginalStack)
 
-    % create the figure and make it invisible so that MATLAB doesn't steal 
+    % instantiate the figure and make it invisible so that MATLAB doesn't steal 
     % focus when editing the figures
     figures(index) = figure('visible', 'off');
+    % actually add the traces to the figure
     createInteractiveFigure(subFolderPath, figures(index));
 
 end
 
+% make all the firgures visible for future use
 for i = 1:numel(filenames)
     imageName = extractBefore(currentfilename, '.nd2');
     subFolderPath = fullfile(results_folder, imageName);
