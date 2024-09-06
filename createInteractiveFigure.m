@@ -1,4 +1,4 @@
-function createInteractiveFigure(folderPath, currentFigure)
+function createInteractiveFigure(folderPath, currentFigure, maturationEfficiency)
 %createInteractiveFigure generates an interactive figure for the folder
 %   Takes in a folderpath and uses the AvgIntensity data generated
 %   by tracePlotterOriginalFig to create a figure containg all the traces
@@ -9,7 +9,8 @@ set(0,'CurrentFigure',currentFigure)
 avg_intensity_survival = readmatrix(csvFilePath);
 plot(avg_intensity_survival(:,1));
 slmin = 1;
-slmax = size (avg_intensity_survival,2);
+NumberOfTraces = size (avg_intensity_survival,2);
+slmax = NumberOfTraces;
 hsl = uicontrol('Style','slider','Min',slmin,'Max',slmax,...
                  'SliderStep',[1 1]./(slmax-slmin),'Value',1,...
                  'Position',[20 0 200 20]);
@@ -17,12 +18,18 @@ hsl = uicontrol('Style','slider','Min',slmin,'Max',slmax,...
    set(hsl,'Callback',@(hObject,eventdata) plot(avg_intensity_survival(:,round(get(hObject,'Value')))))
 
 %check if the figure has previously been created or not  
-if exist(fullfile(folderPath, 'interactiveFig.fig'), 'file') == 0
+if 0 == exist(fullfile(folderPath, 'interactiveFig.fig'), 'file')
     data.pressedNums = NaN(slmax,1);
 else
     oldFig = openfig(fullfile(folderPath, 'interactiveFig.fig'), 'invisible');
     oldData = guidata(oldFig);
-    data.pressedNums = oldData.pressedNums;
+    % if the figure already exists check if it has the same number of spots
+    if length(oldData.pressedNums) == NumberOfTraces
+        data.pressedNums = oldData.pressedNums;
+    else
+        disp('New Data does not match old Data. Creating New File')
+        savefig(oldFig, 'oldFig.fig')
+    end
     %check if using the old version where stepIds are a wide row instead of a tall column
     if size(data.pressedNums, 1) < size(data.pressedNums, 2)
         data.pressedNums = transpose(data.pressedNums);
@@ -141,7 +148,7 @@ function updatePlot(src, event, sliderHandle, datapoints)
         stepIDTable = table(TraceNumbers, NumberOfSteps);
         writetable(stepIDTable, stepIDFilePath)
         [superfolder, ~, ~] = fileparts(folderPath);
-        tallySum(superfolder)
+        tallySum(superfolder, maturationEfficiency)
         close
     end
 end

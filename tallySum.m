@@ -1,4 +1,4 @@
-function tallySum(sampleFolderPath)
+function tallySum(sampleFolderPath, maturationEfficiency)
 %tallySum takes all the generated step IDs and counts the occurences
 %   Detailed explanation goes here
 
@@ -33,7 +33,7 @@ function tallySum(sampleFolderPath)
     fractionsAsCell = [{'Fraction'}, num2cell(fractions), num2cell(NaN(1,1))];
     emptyRow = num2cell(NaN(1,5));
     distributionTitles = [NaN, {'Monomers'}, {'Dimers'}, {'Trimers'}, {'Tetramers'}];
-    [oligomericDistribtution, ~] = oligomer_distribution_calculation_Fxn(fractions(1:3), 0.7);
+    [oligomericDistribtution, ~] = oligomer_distribution_calculation_Fxn(fractions(1:3), maturationEfficiency);
     oligomericDistribtution = [{'Fractions'}, num2cell(transpose(oligomericDistribtution))];
     result = [columnTitles; sumAsCell; totalRow; fractionsAsCell; emptyRow; distributionTitles; oligomericDistribtution];
     writecell(result,fullfile(sampleFolderPath, 'sumOfCounts.xlsx'))

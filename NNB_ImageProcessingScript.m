@@ -15,6 +15,8 @@ disp(['Spot radius: ', num2str(spot_radius)])
 disp(['Quality threshold: ', num2str(quality_threshold)])
 disp(['Code folder: ', codeFolder])
 disp(['Fiji path: ', fijiPath])
+maturationEfficiency = 0.7;
+disp(['Maturation efficiency: ', maturationEfficiency])
 answer = '';
 while ~strcmp(answer,'Yes')
     if ismac
@@ -84,7 +86,7 @@ for index = 1:length(filenames)
     % focus when editing the figures
     figures(index) = figure('visible', 'off');
     % actually add the traces to the figure
-    createInteractiveFigure(subFolderPath, figures(index));
+    createInteractiveFigure(subFolderPath, figures(index), maturationEfficiency);
 
 end
 
