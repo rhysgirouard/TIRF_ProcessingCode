@@ -39,7 +39,8 @@ end
 
 guidata(currentFigure,data)
 
-set(currentFigure, 'KeyPressFcn', @(src, event) updatePlot(src, event, hsl, avg_intensity_survival));
+set(currentFigure, 'KeyPressFcn', @(src, event) updatePlot(src, event, ...
+    hsl, avg_intensity_survival, maturationEfficiency));
 
 
 
@@ -53,7 +54,7 @@ disp([extractAfter(folderPath,'Results/'), ' figure created'])
 end
 
 
-function updatePlot(src, event, sliderHandle, datapoints)
+function updatePlot(src, event, sliderHandle, datapoints, maturationEfficiency)
 %updatePlot updates the figure(src) based on the  key pressed  
 
     %Read in the array to track the step IDs

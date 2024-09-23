@@ -1,9 +1,10 @@
-%Converts the input folder of nd2s into figures for manual step counting. 
+% Converts the input folder of nd2s to figures for manual step counting. 
 clear
 
-%Set settings if they haven't previously been set or load them if they have
-%NOTE: old settings must be deleted or NNB_Settings must be run separately 
-% to change the settings or after updating the code.
+% Set settings if they haven't previously been set or load them if they 
+% have
+% NOTE: old settings must be deleted or NNB_Settings must be run  
+% separately to change the settings or after updating the code.
 if exist('NNBprocessingSettings.mat', 'file')  ~= 2
     NNB_Settings
 elseif exist('NNBprocessingSettings.mat', 'file')  == 2 
@@ -27,17 +28,18 @@ while ~strcmp(answer,'Yes')
         error('Execution canceled by folder selection dialog box')
     end
 
-    answer = questdlg(['Does input folder contain only the .nd2 files you' ...
-        ' wish to process? i.e. no 3 channel images, partial timelapses,' ...
-        ' or other files/folders'], 'Folder Check', 'Yes',...
-        'No (Select another folder)', 'Cancel', 'Yes');
+    answer = questdlg(['Does input folder contain only the .nd2 ' ...
+        'files you wish to process? i.e. no 3 channel images, ' ...
+        'partial timelapses, or other files/folders'], 'Folder Check',...
+         'Yes', 'No (Select another folder)', 'Cancel', 'Yes');
     if strcmp(answer, 'Cancel') || strcmp(answer, '')
         error('Execution canceled by folder check dialog box')
     end
 
 end
 
-%add the scripts folder to the path so matlab knows where ImageJ script is
+% add the scripts folder to the PATH so matlab knows where the ImageJ 
+% script is
 scriptsPath = fullfile(fijiPath, 'scripts');
 addpath(scriptsPath)
 
@@ -52,7 +54,7 @@ disp('--------------------')
 % I should probably put this somewhere else (as a setting?)
 ext = '*.nd2';
 
-% Get the list of files with the correct extension in the provided folder
+% Get a list of all files with the correct extension in the input folder
 files = dir(fullfile(inputFolder,ext));
 filenames = {files.name};
 filenames = sort(filenames);
@@ -61,11 +63,12 @@ filenames = sort(filenames);
 ImageJ;
 import ij.*
 
-% create the array of figures so that we can loop through them at the end
+% create the array of figures to loop through at the end
 figures = gobjects(1,numel(filenames));
 
 % Process each image
 for index = 1:length(filenames)
+
     currentfilename = filenames{index};
     imageName = extractBefore(currentfilename, '.nd2');
     subFolderPath = fullfile(results_folder, imageName);
@@ -78,15 +81,18 @@ for index = 1:length(filenames)
     [~, ~, OriginalStack] = generateFirstFramesProjection(tifFilePath);
     firstFramesProjection = fullfile(subFolderPath, 'First3frames.tif');
 
-    saveTrackStatisticsCSV(firstFramesProjection, subFolderPath, spot_radius, quality_threshold)
+    saveTrackStatisticsCSV(firstFramesProjection, subFolderPath,...
+        spot_radius, quality_threshold)
     
     prepareFolderForFigureCreation(subFolderPath, OriginalStack)
 
-    % instantiate the figure and make it invisible so that MATLAB doesn't steal 
-    % focus when editing the figures
+    % instantiate the figure and make it invisible so that MATLAB  
+    % doesn't steal focus when editing the figures
     figures(index) = figure('visible', 'off');
-    % actually add the traces to the figure
-    createInteractiveFigure(subFolderPath, figures(index), maturationEfficiency);
+
+    % add the traces to the figure
+    createInteractiveFigure(subFolderPath, figures(index),...
+        maturationEfficiency);
 
 end
 

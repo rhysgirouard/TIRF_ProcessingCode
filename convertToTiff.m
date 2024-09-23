@@ -8,6 +8,8 @@ imagePath = fullfile(sourceDir, imageName);
 
 % Open the image using Bio-Formats
 options = loci.plugins.in.ImporterOptions();
+options.setConcatenate(true)
+options.setOpenAllSeries(true)
 options.setId(imagePath);
 imps = loci.plugins.BF.openImagePlus(options);  % This will return an array of ImagePlus objects
 imp = imps(1); % There has to be a way to skip this step
