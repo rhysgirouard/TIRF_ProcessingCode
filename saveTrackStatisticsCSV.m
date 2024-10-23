@@ -1,4 +1,4 @@
-function saveTrackStatisticsCSV(imagePath, folderPath, spotRadius, qualityThreshold)
+function saveTrackStatisticsCSV(imagePath, folderPath, spotRadius, qualityThreshold, channel)
 %saveTrackStatisticsCSV runs Trackmate on the provided image and saves the
 %track statistics in the folderPath. Requires ImageJ to be running
 %   Takes in an imagePath and runs a motion tracking promgram called
@@ -48,6 +48,7 @@ map.put('TARGET_CHANNEL', Integer.valueOf(1)); % Needs to be an integer, otherwi
 map.put('THRESHOLD', qualityThreshold);
 map.put('DO_MEDIAN_FILTERING', true);
 settings.detectorSettings = map;
+settings.dt = channel;
 % Configure tracker
 settings.trackerFactory = NearestNeighborTrackerFactory();
 settings.trackerSettings = settings.trackerFactory.getDefaultSettings();
@@ -73,10 +74,13 @@ end
 % Save CSVs
 sm = SelectionModel(model);
 ds = DisplaySettings();
-fullPath = fullfile(folderPath, 'Track statistics.csv');
-tracksFile = java.io.File(fullPath);
+tracksfullPath = fullfile(folderPath, 'Track statistics.csv');
+tracksFile = java.io.File(tracksfullPath);
+spotsfullPath = fullfile(folderPath, 'Spot statistics.csv');
+spotsFile = java.io.File(spotsfullPath);
 trackTableView = TrackTableView(model, sm, ds, imagePath);
 trackTableView.getTrackTable().exportToCsv(tracksFile);
+trackTableView.getSpotTable().exportToCsv(spotsFile)
 
 % Close the image
 imp.close();

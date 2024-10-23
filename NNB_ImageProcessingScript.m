@@ -82,7 +82,7 @@ for index = 1:length(filenames)
     firstFramesProjection = fullfile(subFolderPath, 'First3frames.tif');
 
     saveTrackStatisticsCSV(firstFramesProjection, subFolderPath,...
-        spot_radius, quality_threshold)
+        spot_radius, quality_threshold, 1)
     
     prepareFolderForFigureCreation(subFolderPath, OriginalStack)
 

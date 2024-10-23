@@ -141,6 +141,8 @@ function updatePlot(src, event, sliderHandle, datapoints, maturationEfficiency)
 
     if quitting
         disp('closing and saving')
+        % set the CreateFcn to an 
+        
         savefig(src.FileName)
         % saves a csv of the step identification(this csv is vestigial)
         stepIDFilePath = fullfile(folderPath, 'stepIDs.csv');
