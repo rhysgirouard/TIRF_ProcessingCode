@@ -5,8 +5,9 @@ function createInteractiveFigure(folderPath, currentFigure, maturationEfficiency
 %   from the folder tif that can be covieniently labeled and zoomed
 
 csvFilePath = fullfile(folderPath,  'AvgIntesnitySurvivalData.csv');
-set(0,'CurrentFigure',currentFigure)
 avg_intensity_survival = readmatrix(csvFilePath);
+spot_info = readmatrix(fullfile(folderPath, 'SpotInfoData.csv'));
+set(0,'CurrentFigure',currentFigure)
 plot(avg_intensity_survival(:,1));
 slmin = 1;
 NumberOfTraces = size (avg_intensity_survival,2);
@@ -40,7 +41,7 @@ end
 guidata(currentFigure,data)
 
 set(currentFigure, 'KeyPressFcn', @(src, event) updatePlot(src, event, ...
-    hsl, avg_intensity_survival, maturationEfficiency));
+    hsl, avg_intensity_survival, spot_info, maturationEfficiency));
 
 
 
@@ -54,7 +55,7 @@ disp([extractAfter(folderPath,'Results/'), ' figure created'])
 end
 
 
-function updatePlot(src, event, sliderHandle, datapoints, maturationEfficiency)
+function updatePlot(src, event, sliderHandle, datapoints, spot_info, maturationEfficiency)
 %updatePlot updates the figure(src) based on the  key pressed  
 
     %Read in the array to track the step IDs
@@ -82,7 +83,8 @@ function updatePlot(src, event, sliderHandle, datapoints, maturationEfficiency)
                 data.pressedNums(sliderValue) = str2double(keyPressed);
                 guidata(src,data)
                 txt = num2str(data.pressedNums(sliderHandle.Value));
-                plotWithText(datapoints(:, sliderHandle.Value), sliderHandle.Value, txt, true);
+                info = spot_info(sliderHandle.Value,:);
+                plotWithText(datapoints(:, sliderHandle.Value), sliderHandle.Value, info, txt, true);
                 pause(0.20)
                 if sliderValue < numberOfTraces
                     sliderHandle.Value = sliderValue+1;
@@ -135,7 +137,8 @@ function updatePlot(src, event, sliderHandle, datapoints, maturationEfficiency)
 
     if isempty(event.Modifier)
         txt = num2str(data.pressedNums(sliderHandle.Value));
-        plotWithText(datapoints(1:newLim, sliderHandle.Value), sliderHandle.Value, txt, false);
+        info = spot_info(sliderHandle.Value, :);
+        plotWithText(datapoints(1:newLim, sliderHandle.Value), sliderHandle.Value, info, txt, false);
         guidata(src,data)
     end
 
@@ -156,7 +159,7 @@ function updatePlot(src, event, sliderHandle, datapoints, maturationEfficiency)
     end
 end
 
-function plotWithText(yVals, traceNum, txt, withOverlay)
+function plotWithText(yVals, traceNum, info, txt, withOverlay)
 %plotWithText plots a figure with the txt displayed in the top right and
 %the Trace # above the graph. When withOverlay is true text is displayed on
 %top of the figure instead of the top right
@@ -165,7 +168,8 @@ function plotWithText(yVals, traceNum, txt, withOverlay)
     hold on;
     xL=xlim;
     yL=ylim;
-    title(['Trace #', num2str(traceNum)])
+    title({['Trace #', num2str(traceNum), ' | Quality: ', num2str(info(4))];...
+    ['x: ', num2str(info(2)), ' y: ', num2str(info(3))]})
     if strcmp(txt,'NaN') || strcmp(txt,'0')
         txt = 'Uncounted';
     end
