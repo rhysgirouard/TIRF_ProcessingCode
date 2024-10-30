@@ -49,7 +49,7 @@ end
 guidata(currentFigure,data)
 
 set(currentFigure, 'KeyPressFcn', @(src, event) updatePlot(src, event, ...
-    hsl, avg_intensity_survival, spot_info, maturationEfficiency));
+    hsl, avg_intensity_survival, maturationEfficiency, spot_info));
 
 
 
