@@ -6,7 +6,15 @@ function createInteractiveFigure(folderPath, currentFigure, maturationEfficiency
 
 csvFilePath = fullfile(folderPath,  'AvgIntesnitySurvivalData.csv');
 avg_intensity_survival = readmatrix(csvFilePath);
-spot_info = readmatrix(fullfile(folderPath, 'SpotInfoData.csv'));
+
+spotInfoSaved = false;
+[NumFrames, numTraces]  = size(avg_intensity_survival);
+spot_info = zeros(numTraces,4);
+if isfile(fullfile(folderPath, 'SpotInfoData.csv'))
+    spotInfoSaved = true;
+    spot_info = readmatrix(fullfile(folderPath, 'SpotInfoData.csv'));
+end
+
 set(0,'CurrentFigure',currentFigure)
 plot(avg_intensity_survival(:,1));
 slmin = 1;
@@ -55,12 +63,19 @@ disp([extractAfter(folderPath,'Results/'), ' figure created'])
 end
 
 
-function updatePlot(src, event, sliderHandle, datapoints, spot_info, maturationEfficiency)
+function updatePlot(src, event, sliderHandle, datapoints, maturationEfficiency, spot_info)
 %updatePlot updates the figure(src) based on the  key pressed  
 
     %Read in the array to track the step IDs
     data = guidata(src);
     [folderPath, ~, ~] = fileparts(src.FileName);
+    
+    if nargin < 6
+        [numFrames, numTraces]  = size(datapoints);
+        spot_info = zeros(numTraces,4);
+    end
+    
+    %spot_info = zeros(numTraces,4);
 
     % Get the key that was pressed
     keyPressed = event.Key;
@@ -168,8 +183,12 @@ function plotWithText(yVals, traceNum, info, txt, withOverlay)
     hold on;
     xL=xlim;
     yL=ylim;
-    title({['Trace #', num2str(traceNum), ' | Quality: ', num2str(info(4))];...
-    ['x: ', num2str(info(2)), ' y: ', num2str(info(3))]})
+    if info(4) == 0
+        title(['Trace #', num2str(traceNum)])
+    else
+        title({['Trace #', num2str(traceNum), ' | Quality: ', num2str(info(4))];...
+        ['x: ', num2str(info(2)), ' y: ', num2str(info(3))]})
+    end
     if strcmp(txt,'NaN') || strcmp(txt,'0')
         txt = 'Uncounted';
     end
