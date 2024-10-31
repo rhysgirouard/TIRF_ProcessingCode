@@ -60,11 +60,15 @@ function [] = prepareFolderForFigureCreation(tifFolderPath, OriginalStack)
     % remove roi that exceeds image dimension
     avg_intensity_survival = avg_intensity_survival(:,1:filteredIndex-1);
     spot_info = spot_info(1:filteredIndex-1,:);
+    
 
-    %sort by quality so that resulting figure is deterministic 
-    [~, sortedIndicies] = sort(spot_info(:,4));
-    spot_info = spot_info(sortedIndicies,:);
-    avg_intensity_survival = avg_intensity_survival(:,sortedIndicies);
+    %sort by quality so that resulting figure is deterministic unless the
+    %figure has previously been created.
+    if ~isfile(fullfile(tifFolderPath,'interactiveFig.fig'))
+        [~, sortedIndicies] = sort(spot_info(:,4));
+        spot_info = spot_info(sortedIndicies,:);
+        avg_intensity_survival = avg_intensity_survival(:,sortedIndicies);
+    end
 
     % Save the trace data into a csv
     writematrix(avg_intensity_survival,fullfile(tifFolderPath, 'AvgIntesnitySurvivalData.csv'))

@@ -71,8 +71,35 @@ function updatePlot(src, event, sliderHandle, datapoints, maturationEfficiency, 
     [folderPath, ~, ~] = fileparts(src.FileName);
     
     if nargin < 6
+        if isfield(data, 'info')
+            spot_info = data.info;
+        elseif isfile(fullfile(folderPath,'SpotInfoData.csv'))
+            spot_info = readmatrix(fullfile(folderPath,'SpotInfoData.csv'));
+            data.info = spot_info;
+            guidata(src, data)
+        elseif isfile(fullfile(folderPath, 'Track statistics.csv'))
+            pathParts = split(folderPath,'/');
+            subFolderName = pathParts{length(pathParts)};
+            imagePath = fullfile(folderPath, [subFolderName, '.tif']);
+
+            InfoImage=imfinfo(imagePath);
+            mImage=InfoImage(1).Width;
+            nImage=InfoImage(1).Height;
+            NumberImages=length(InfoImage);
+            OriginalStack=zeros(nImage,mImage,NumberImages,'uint16');
+
+            % copy image stack into a 3D array
+            for i=1:NumberImages
+                OriginalStack(:,:,i)=imread(imagePath,'Index',i,'Info',InfoImage);
+            end
+            prepareFolderForFigureCreation(folderPath,OriginalStack)
+            spot_info = readmatrix(fullfile(folderPath,'SpotInfoData.csv'));
+            data.info = spot_info;
+            guidata(src, data)
+        else
         [numFrames, numTraces]  = size(datapoints);
         spot_info = zeros(numTraces,4);
+        end
     end
     
     %spot_info = zeros(numTraces,4);
