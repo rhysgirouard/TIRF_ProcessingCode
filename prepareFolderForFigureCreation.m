@@ -5,11 +5,8 @@ function [] = prepareFolderForFigureCreation(tifFolderPath, OriginalStack)
 %   containing the data for all relevant traces for future figure
 %   generation
 
-    nCrop = 400;
-    mCrop = 400;
-    nImage = 512;
-    mImage = 512;
-    NumberImages = size(OriginalStack,3);
+    [mImage, nImage, NumberImages] = size(OriginalStack);
+
 
     tracks_file = fullfile(tifFolderPath,'Track statistics.csv');
     [tracks_data, ~]= readtext(tracks_file, '[,\t]', '=', '[]', 'numeric-empty2zero');
@@ -27,19 +24,18 @@ function [] = prepareFolderForFigureCreation(tifFolderPath, OriginalStack)
     % Define 5x5 roi centered at each particle coordinate
     roi_size = 5; % in pixels 
     n_particle = size(xy_coordinates,1);
-    roi_x_edge = zeros(1,n_particle);
-    roi_y_edge = zeros(1,n_particle);
-    roi = cell(NumberImages,n_particle);
-    
+    roi_left_edge = zeros(1,n_particle);
+    roi_top_edge = zeros(1,n_particle);    
     % define edge of roi for each particle
     for spotNum=1:n_particle
-        roi_x_edge(spotNum) = xy_coordinates(spotNum,1)-((roi_size-1)/2)+1; % pixel value start at 0 but matlab start at 1.
-        roi_y_edge(spotNum) = xy_coordinates(spotNum,2)-((roi_size-1)/2)+1;
+        roi_left_edge(spotNum) = xy_coordinates(spotNum,1)-((roi_size-1)/2)+1; % pixel value start at 0 but matlab start at 1.
+        roi_top_edge(spotNum) = xy_coordinates(spotNum,2)-((roi_size-1)/2)+1;
     end
     
     % acquire avg and max intensity of each particle in every frame
-    nCropLeft=nImage-nCrop+1;
-
+    % nCropLeft=nImage-nCrop+1;
+    
+    % intialize varaibles for the loop of the maximum possible size 
     rois = cell(n_particle, 1);
     max_intensity = zeros(NumberImages,n_particle);
     avg_intensity_survival = zeros(NumberImages,n_particle);
@@ -47,9 +43,10 @@ function [] = prepareFolderForFigureCreation(tifFolderPath, OriginalStack)
     spot_info(:,1) = 1:n_particle;
     filteredIndex = 1;
 
+% filter out spots that are too close to the edge to get a full roi
     for spotNum=1:n_particle
-            if roi_x_edge(spotNum)>=nCropLeft && roi_x_edge(spotNum)+roi_size-1<=nImage && roi_y_edge(spotNum)>=1 && roi_y_edge(spotNum)+roi_size-1<=mCrop
-                rois{filteredIndex,1} = OriginalStack(roi_y_edge(spotNum):roi_y_edge(spotNum)+roi_size-1,roi_x_edge(spotNum):roi_x_edge(spotNum)+roi_size-1,1:NumberImages);
+            if roi_left_edge(spotNum)>=1 && roi_left_edge(spotNum)+roi_size-1<=nImage && roi_top_edge(spotNum)>=1 && roi_top_edge(spotNum)+roi_size-1<=mImage
+                rois{filteredIndex,1} = OriginalStack(roi_top_edge(spotNum):roi_top_edge(spotNum)+roi_size-1,roi_left_edge(spotNum):roi_left_edge(spotNum)+roi_size-1,1:NumberImages);
                 max_intensity(1:NumberImages, filteredIndex) = max(rois{filteredIndex},[],[1,2]); % max of each roi in each frame
                 avg_intensity_survival(1:NumberImages, filteredIndex) = mean(rois{filteredIndex},[1,2]); % mean of each roi in each frame
                 spot_info(filteredIndex,2:4) = xy_coordinates(spotNum,1:3);
@@ -57,15 +54,15 @@ function [] = prepareFolderForFigureCreation(tifFolderPath, OriginalStack)
             end
     end
     
-    % remove roi that exceeds image dimension
+    % remove zeros from overallocation at initialization
     avg_intensity_survival = avg_intensity_survival(:,1:filteredIndex-1);
     spot_info = spot_info(1:filteredIndex-1,:);
     
 
-    %sort by quality so that resulting figure is deterministic unless the
+    %sort by x-coord so that resulting figure is deterministic unless the
     %figure has previously been created.
     if ~isfile(fullfile(tifFolderPath,'interactiveFig.fig'))
-        [~, sortedIndicies] = sort(spot_info(:,4));
+        [~, sortedIndicies] = sort(spot_info(:,2));
         spot_info = spot_info(sortedIndicies,:);
         avg_intensity_survival = avg_intensity_survival(:,sortedIndicies);
     end
