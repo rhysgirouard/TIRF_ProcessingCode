@@ -28,22 +28,22 @@ hsl = uicontrol('Style','slider','Min',slmin,'Max',slmax,...
 
 %check if the figure has previously been created or not  
 if 0 == exist(fullfile(folderPath, 'interactiveFig.fig'), 'file')
-    data.pressedNums = NaN(slmax,1);
+    data.pressedNums = NaN(NumberOfTraces,1);
 else
     oldFig = openfig(fullfile(folderPath, 'interactiveFig.fig'), 'invisible');
     oldData = guidata(oldFig);
     % if the figure already exists check if it has the same number of spots
     if length(oldData.pressedNums) == NumberOfTraces
         data.pressedNums = oldData.pressedNums;
+    %check if using the old version where stepIds are a wide row instead of a tall column
+    elseif size(oldData.pressedNums, 1) < size(oldData.pressedNums, 2)
+
+        data.pressedNums = transpose(oldData.pressedNums);
     else
         disp('New Data does not match old Data. Creating New File')
         savefig(oldFig, 'oldFig.fig')
+        data.pressedNums = NaN(NumberOfTraces,1);
     end
-    %check if using the old version where stepIds are a wide row instead of a tall column
-    if size(data.pressedNums, 1) < size(data.pressedNums, 2)
-        data.pressedNums = transpose(data.pressedNums);
-    end
-    close(oldFig)
 end
 
 guidata(currentFigure,data)
