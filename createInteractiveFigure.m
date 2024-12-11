@@ -227,5 +227,7 @@ function plotWithText(yVals, traceNum, info, txt, withOverlay)
         text(0.99*xL(2),0.99*yL(2), ['Steps:', txt], 'HorizontalAlignment','right',...
             'VerticalAlignment','top', 'FontSize', 30, 'Color', [1, 0, 0, 0])
     end
+    xlabel('Frame')
+    ylabel('Spot Intensity')
     hold off
 end
