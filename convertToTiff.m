@@ -1,4 +1,6 @@
-function [] = convertToTiff(sourceDir, destinationDir, imageName)
+function [convertedImagePath] = convertToTiff(sourceDir, destinationDir, imageName)
+
+
 import ij.*;
 import loci.plugins.BF.*;
 import ij.io.FileSaver.*;
@@ -22,13 +24,13 @@ end
 disp(['Saving to: ', destinationDir]);
 
 newImageName = extractBefore(imageName, '.nd2');
-savepath = fullfile(destinationDir, [newImageName, '.tif']);
+convertedImagePath = fullfile(destinationDir, [newImageName, '.tif']);
 fs = ij.io.FileSaver(imp);
-fs.saveAsTiff(savepath);
+fs.saveAsTiff(convertedImagePath);
 
 % Check if the save failed to create a file in the right place
-if ~isfile(savepath)
-    error(append('Failed to save ', savepath))
+if ~isfile(convertedImagePath)
+    error(append('Failed to save ', convertedImagePath))
 end
 
 end
