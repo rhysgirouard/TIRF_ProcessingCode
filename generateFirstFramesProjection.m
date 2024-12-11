@@ -1,4 +1,4 @@
-function [nImage, NumberImages, OriginalStack] = generateFirstFramesProjection(tifFilePath)
+function [OutputFilePath] = generateFirstFramesProjection(folderPath, OriginalStack)
 %generateFirstFramesProjection preloads the image and generates a Z-projection for tracking
 %   Loads in the image as a 3D uint16 array for future use and then sums
 %   the first 3 frames together to create a background "averaged" image for
@@ -6,21 +6,8 @@ function [nImage, NumberImages, OriginalStack] = generateFirstFramesProjection(t
 %   because Trackmate is set up for motion tracking. 
 
 OutputFileName = 'First3frames.tif';
-[path,~,~] = fileparts(tifFilePath);
-OutputFile = fullfile(path,OutputFileName);
+OutputFilePath = fullfile(folderPath,OutputFileName);
 NoProjection = 3;
-
-% Load image
-InfoImage=imfinfo(tifFilePath);
-mImage=InfoImage(1).Width;
-nImage=InfoImage(1).Height;
-NumberImages=length(InfoImage);
-OriginalStack=zeros(nImage,mImage,NumberImages,'uint16');
-
-% copy image stack into a 3D array
-for i=1:NumberImages
-   OriginalStack(:,:,i)=imread(tifFilePath,'Index',i,'Info',InfoImage);
-end
 
 % Create a Z-projection(sum of intensities) of the first three frames to
 %average out noise
@@ -32,6 +19,6 @@ end
 % Create an image stack with 5 copies of the Zprojection for "motion
 % tracking" in Trackmate
 for i=1:5
-    imwrite(ZProjection,OutputFile,'WriteMode','append','Compression','none');
+    imwrite(ZProjection,OutputFilePath,'WriteMode','append','Compression','none');
 end
 end
