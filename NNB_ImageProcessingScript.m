@@ -77,9 +77,9 @@ for index = 1:length(filenames)
     convertToTiff(inputFolder, subFolderPath, currentfilename);
 
     tifFilePath = fullfile(subFolderPath, [imageName, '.tif']);
-
-    [~, ~, OriginalStack] = generateFirstFramesProjection(tifFilePath);
-    firstFramesProjection = fullfile(subFolderPath, 'First3frames.tif');
+    [nImage, NumberImages, OriginalStack] = readInTimelapse(tifFilePath)
+    [firstFramesProjection] = generateFirstFramesProjection(subFolderPath, OriginalStack)
+    
 
     saveTrackStatisticsCSV(firstFramesProjection, subFolderPath,...
         spot_radius, quality_threshold, 1)
