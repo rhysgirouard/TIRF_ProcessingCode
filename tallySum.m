@@ -26,11 +26,12 @@ function tallySum(sampleFolderPath, maturationEfficiency)
         end
     end
     columnTitles = [{'Uncounted'}, {'One Step'}, {'Two Steps'}, {'Three Steps'}, {'Four Steps'}];
-    totalCounted = distributionOfCounts(2)+distributionOfCounts(3)+distributionOfCounts(4)+distributionOfCounts(5);
-    fractions = [distributionOfCounts(2)/totalCounted, distributionOfCounts(3)/totalCounted, distributionOfCounts(4)/totalCounted];
-    totalRow = [{'Total'}, num2cell(totalCounted), '% Counted', num2cell(totalCounted/(distributionOfCounts(1)+totalCounted)*100), num2cell(NaN(1,1))];
+    totalCounted = sum(distributionOfCounts(2:5));
+    fractions = distributionOfCounts(2:5)/totalCounted;
+    totalRow = [{'Total'}, num2cell(totalCounted), '% Counted', ...
+        num2cell( totalCounted / ( sum(distributionOfCounts) * 100 )), num2cell(NaN(1,1))];
     sumAsCell = num2cell(distributionOfCounts);
-    fractionsAsCell = [{'Fraction'}, num2cell(fractions), num2cell(NaN(1,1))];
+    fractionsAsCell = [{'Fraction'}, num2cell(fractions)];
     emptyRow = num2cell(NaN(1,5));
     distributionTitles = [NaN, {'Monomers'}, {'Dimers'}, {'Trimers'}, {'Tetramers'}];
     [oligomericDistribtution, ~] = oligomer_distribution_calculation_Fxn(fractions(1:3), maturationEfficiency);
