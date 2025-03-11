@@ -1,14 +1,11 @@
-function createInteractiveFigure(folderPath, currentFigure, maturationEfficiency)
+function createInteractiveFigure(folderPath, currentFigure, maturationEfficiency, subtractedTraceData)
 %createInteractiveFigure generates an interactive figure for the folder
-%   Takes in a folderpath and uses the AvgIntensity data generated
-%   by tracePlotterOriginalFig to create a figure containg all the traces
+%   Takes in a folderpath and uses the trace data generated
+%   by prepareFolderForFigureCreation to create a figure containg all the traces
 %   from the folder tif that can be covieniently labeled and zoomed
 
-csvFilePath = fullfile(folderPath,  'AvgIntesnitySurvivalData.csv');
-avg_intensity_survival = readmatrix(csvFilePath);
-
 spotInfoSaved = false;
-[NumFrames, numTraces]  = size(avg_intensity_survival);
+[NumFrames, numTraces]  = size(subtractedTraceData);
 spot_info = zeros(numTraces,4);
 if isfile(fullfile(folderPath, 'SpotInfoData.csv'))
     spotInfoSaved = true;
@@ -16,16 +13,15 @@ if isfile(fullfile(folderPath, 'SpotInfoData.csv'))
 end
 
 set(0,'CurrentFigure',currentFigure)
-plot(avg_intensity_survival(:,1));
+plot(subtractedTraceData(:,1));
 slmin = 1;
-NumberOfTraces = size (avg_intensity_survival,2);
+NumberOfTraces = size (subtractedTraceData,2);
 slmax = NumberOfTraces;
 hsl = uicontrol('Style','slider','Min',slmin,'Max',slmax,...
                  'SliderStep',[1 1]./(slmax-slmin),'Value',1,...
                  'Position',[20 0 200 20]);
 %  set(hsl,'Callback',@(hObject,eventdata) plot(moving_avr_intensity(:,round(get(hObject,'Value')))))
-   set(hsl,'Callback',@(hObject,eventdata) plot(avg_intensity_survival(:,round(get(hObject,'Value')))))
-
+   set(hsl,'Callback',@(hObject,eventdata) plot(subtractedTraceData(:,round(get(hObject,'Value')))))
 %check if the figure has previously been created or not  
 if 0 == exist(fullfile(folderPath, 'interactiveFig.fig'), 'file')
     data.pressedNums = NaN(NumberOfTraces,1);
@@ -49,7 +45,7 @@ end
 guidata(currentFigure,data)
 
 set(currentFigure, 'KeyPressFcn', @(src, event) updatePlot(src, event, ...
-    hsl, avg_intensity_survival, maturationEfficiency, spot_info));
+    hsl, subtractedTraceData, maturationEfficiency, spot_info));
 
 
 
@@ -63,10 +59,10 @@ disp([extractAfter(folderPath,'Results/'), ' figure created'])
 end
 
 
-function updatePlot(src, event, sliderHandle, datapoints, maturationEfficiency, spot_info)
+function updatePlot(src, event, sliderHandle, rawData, maturationEfficiency, spot_info)
 %updatePlot updates the figure(src) based on the  key pressed  
 
-    %Read in the array to track the step IDs
+%Read in the array to track the step IDs
     data = guidata(src);
     [folderPath, ~, ~] = fileparts(src.FileName);
     
@@ -97,7 +93,7 @@ function updatePlot(src, event, sliderHandle, datapoints, maturationEfficiency, 
             data.info = spot_info;
             guidata(src, data)
         else
-        [numFrames, numTraces]  = size(datapoints);
+        [numFrames, numTraces]  = size(rawData);
         spot_info = zeros(numTraces,4);
         end
     end
@@ -109,8 +105,8 @@ function updatePlot(src, event, sliderHandle, datapoints, maturationEfficiency, 
     %check the current trace index
     sliderValue = round(get(sliderHandle, 'Value'));
                
-    numberOfTraces = size(datapoints,2);
-    numberOfFrames = size(datapoints,1);
+    numberOfTraces = size(rawData,2);
+    numberOfFrames = size(rawData,1);
     
     newLim = numberOfFrames;
 
@@ -126,7 +122,7 @@ function updatePlot(src, event, sliderHandle, datapoints, maturationEfficiency, 
                 guidata(src,data)
                 txt = num2str(data.pressedNums(sliderHandle.Value));
                 info = spot_info(sliderHandle.Value,:);
-                plotWithText(datapoints(:, sliderHandle.Value), sliderHandle.Value, info, txt, true);
+                plotWithText(rawData(:, sliderHandle.Value), sliderHandle.Value, info, txt, true);
                 pause(0.20)
                 if sliderValue < numberOfTraces
                     sliderHandle.Value = sliderValue+1;
@@ -143,7 +139,7 @@ function updatePlot(src, event, sliderHandle, datapoints, maturationEfficiency, 
         case {'d'}
             newLim = 300;
         case {'f'}
-            newLim = size(datapoints,1);
+            newLim = size(rawData,1);
         %Use the arrowkeys to move b/w graphs without updating the steps
         case 'leftarrow'
             if isnan(data.pressedNums(sliderValue)) 
@@ -180,7 +176,7 @@ function updatePlot(src, event, sliderHandle, datapoints, maturationEfficiency, 
     if isempty(event.Modifier)
         txt = num2str(data.pressedNums(sliderHandle.Value));
         info = spot_info(sliderHandle.Value, :);
-        plotWithText(datapoints(1:newLim, sliderHandle.Value), sliderHandle.Value, info, txt, false);
+        plotWithText(rawData(1:newLim, sliderHandle.Value), sliderHandle.Value, info, txt, false);
         guidata(src,data)
     end
 

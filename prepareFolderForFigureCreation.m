@@ -1,4 +1,4 @@
-function [] = prepareFolderForFigureCreation(tifFolderPath, OriginalStack)
+function [traceData] = prepareFolderForFigureCreation(tifFolderPath, OriginalStack)
 %prepareFolderForFigureCreation prepares a folder for figure generation
 %   takes a folderpath to a folder that has been prepared with an
 %   OriginalStack.mat and TrackStatistics.csv and generates the arrays
@@ -70,5 +70,6 @@ function [] = prepareFolderForFigureCreation(tifFolderPath, OriginalStack)
     % Save the trace data into a csv
     writematrix(avg_intensity_survival,fullfile(tifFolderPath, 'AvgIntesnitySurvivalData.csv'))
     writematrix(spot_info,fullfile(tifFolderPath, 'SpotInfoData.csv'))
+    traceData = avg_intensity_survival;
 
 end

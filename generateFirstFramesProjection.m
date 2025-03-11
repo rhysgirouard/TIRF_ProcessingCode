@@ -8,6 +8,12 @@ function [OutputFilePath] = generateFirstFramesProjection(folderPath, OriginalSt
 OutputFileName = 'First3frames.tif';
 OutputFilePath = fullfile(folderPath,OutputFileName);
 NoProjection = 3;
+minimumValue = min(OriginalStack,[],"all");
+if minimumValue < 0
+    OriginalStack = OriginalStack + -1*minimumValue;
+end
+OriginalStack = cast(OriginalStack, 'uint16');
+
 
 % Create a Z-projection(sum of intensities) of the first three frames to
 %average out noise
