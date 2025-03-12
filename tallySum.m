@@ -29,7 +29,7 @@ function tallySum(sampleFolderPath, maturationEfficiency)
     totalCounted = sum(distributionOfCounts(2:5));
     fractions = distributionOfCounts(2:5)/totalCounted;
     totalRow = [{'Total'}, num2cell(totalCounted), '% Counted', ...
-        num2cell( totalCounted / ( sum(distributionOfCounts) * 100 )), num2cell(NaN(1,1))];
+        num2cell( totalCounted / sum(distributionOfCounts) * 100 ), num2cell(NaN(1,1))];
     sumAsCell = num2cell(distributionOfCounts);
     fractionsAsCell = [{'Fraction'}, num2cell(fractions)];
     emptyRow = num2cell(NaN(1,5));
