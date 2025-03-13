@@ -3,26 +3,25 @@ function [olimericDistribution, olimericDistributionTable] = oligomer_distributi
 % =========================== Input parameters ============================
 % =========================================================================
 
-% Observed fraction of k=[1,2,3] steps as 3x1 matrix.
-observedStepDistribution = transpose(stepDistribution);
-
-maturationEfficiency; 
+% Observed fraction of k=[1,2,3...n] steps must be nx1 matrix.
+if size(stepDistribution,2) ~= 1
+    if size(stepDistribution,1) == 1
+        observedStepDistribution = transpose(stepDistribution);
+    else
+        error('Input Matrix size is invalid! Input Distribution must be 1xn or nx1')
+    end
+else
+    observedStepDistribution = stepDistribution;
+end
 
 % =========================================================================
 % = Calculation of n-mer fractions based on observed k-step distributions =
 % =========================================================================
 
-n_max = 4;          % max oligomeric state to consider, 4 = tetramer
+n_max = length(observedStepDistribution)+1;          % max oligomeric state to consider, 4 = tetramer
 s = n_max:n_max;    % s_n,k = theoretical fraction of k-steps in n-mers
 p = n_max:n_max;    % p_n,k = normalized theoretical fraction of k-steps
 
-% === Check input ===
-if ~isequal(size(observedStepDistribution), [1 3])
-    
-end
-if n_max ~= 4
-    error("Calculation valid for upto tetramers, so n_max must be 4")
-end
 
 % === Calculate theoretical probability of k-steps in n-mers ===
 for n = 1:n_max
@@ -55,33 +54,27 @@ end
 
 % X = [ x_1 ; x_2 ; x_3 ] and
 
-A = [  
-        p(1,1) - p(4,1),    p(2,1) - p(4,1),    p(3,1) - p(4,1);
-        p(1,2) - p(4,2),    p(2,2) - p(4,2),    p(3,2) - p(4,2);
-        p(1,3) - p(4,3),    p(2,3) - p(4,3),    p(3,3) - p(4,3)        
-    ];
+A = zeros(n_max-1, n_max-1);
+for n = 1 : (n_max-1)
+    for k = 1 : (n_max-1)
+        A(n,k) = p(k,n) - p(n_max, n);
+    end
+end
 
 % and 
-
-C = [
-        p(4,1);
-        p(4,2);
-        p(4,3)
-    ];
+C = p(n_max, 1 : (n_max-1))';
 
 % With these, we calculate X = [
-X = inv(A) * (observedStepDistribution - C);
+X = A \ (observedStepDistribution - C);
 
 % =========================================================================
 % ======================= Create an output Table ==========================
 % =========================================================================
-
-row_names = [
-    "percentage of monomers:  x_1 ="; 
-    "percentage of dimers:    x_2 ="; 
-    "percentage of trimers:   x_3 =";
-    "percentage of tetramers: x_4 ="];
-X_all = round([ X(1); X(2); X(3); (1 - sum(X))] * 100, 4);
+row_names = cell(n_max,1);
+for n = 1 : n_max
+    row_names{n} = ['percentage of monomers:  x_', num2str(n), ' ='];
+end
+X_all = round([X; (1 - sum(X))]*100, 4);
 olimericDistribution = X_all;
 olimericDistributionTable = array2table(X_all, "RowNames", row_names, "VariableNames", "x_n");
 

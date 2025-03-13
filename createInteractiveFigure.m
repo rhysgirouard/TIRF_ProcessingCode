@@ -114,7 +114,7 @@ function updatePlot(src, event, sliderHandle, rawData, maturationEfficiency, spo
     % Check which key was pressed
     switch keyPressed
         % IF a number is presssed record it and move to the next trace
-        case {'0', '1', '2', '3', '4'}
+        case {'0', '1', '2', '3', '4',  '5', '6', '7', '8', '9'}
             %additionally checks that a modifier key is not being pressed
             %such as command or shift; w/o this MATLAB reads command as 0
             if isempty(event.Modifier)
@@ -128,8 +128,6 @@ function updatePlot(src, event, sliderHandle, rawData, maturationEfficiency, spo
                     sliderHandle.Value = sliderValue+1;
                 end
             end
-        case { '5', '6', '7', '8', '9'}
-            disp('Identification of Traces with more than 4 steps is not supported')
         % When you want to zoom in on the start of the graph use a, s, d, f
         % for the range 1:100, 1:200, 1:300, all respectively
         case {'a'}
