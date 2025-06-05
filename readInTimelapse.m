@@ -15,7 +15,10 @@ for i = 1:NumberImages
    importedStack(:,:,i) = currentFrame;
    summedStack = summedStack + cast(currentFrame, 'double');
 end
-background = imgaussfilt(summedStack,50)./1500;
+
+%TODO: if I can do this without imgaussfilt function then people dont have
+%to add the Image processing toolbox to run the app. 
+background = imgaussfilt(summedStack,50)./NumberImages;
 correctedStack = cast(importedStack, "double") - cast(background, "double");
 
 
