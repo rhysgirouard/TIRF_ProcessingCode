@@ -37,7 +37,9 @@ else
         data.pressedNums = transpose(oldData.pressedNums);
     else
         disp('New Data does not match old Data. Creating New File')
-        savefig(oldFig, 'oldFig.fig')
+        pathForOldFig = fullfile(folderPath, 'oldFig.fig');
+        set(oldFig, 'visible', 'on')
+        savefig(oldFig, pathForOldFig)
         data.pressedNums = NaN(NumberOfTraces,1);
     end
 end
