@@ -24,6 +24,7 @@ import fiji.plugin.trackmate.detection.DogDetectorFactory;
 import fiji.plugin.trackmate.tracking.kdtree.NearestNeighborTrackerFactory;
 import fiji.plugin.trackmate.visualization.table.TrackTableView;
 import fiji.plugin.trackmate.gui.displaysettings.DisplaySettings;
+
 % Open the image
 imp = IJ.openImage(imagePath);
 
@@ -49,6 +50,7 @@ map.put('THRESHOLD', qualityThreshold);
 map.put('DO_MEDIAN_FILTERING', true);
 settings.detectorSettings = map;
 settings.dt = channel;
+
 % Configure tracker
 settings.trackerFactory = NearestNeighborTrackerFactory();
 settings.trackerSettings = settings.trackerFactory.getDefaultSettings();
