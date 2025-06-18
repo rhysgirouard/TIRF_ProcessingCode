@@ -66,6 +66,11 @@ C = p(n_max, 1 : (n_max-1))';
 
 % With these, we calculate X = [
 X = A \ (observedStepDistribution - C);
+%Alternatively we can implement the sum to 1 as an addtional row and then
+%solve the PX = O imposing PX - O > 0
+P = [p';ones(1,n_max)];
+fullStepDist = [observedStepDistribution; 1-sum(observedStepDistribution)];
+nonNegX = lsqnonneg(P, [fullStepDist;1]);
 
 % =========================================================================
 % ======================= Create an output Table ==========================
@@ -74,8 +79,8 @@ row_names = cell(n_max,1);
 for n = 1 : n_max
     row_names{n} = ['percentage of monomers:  x_', num2str(n), ' ='];
 end
-X_all = round([X; (1 - sum(X))]*100, 4);
+X_all = round( [ [ X; (1 - sum(X))], nonNegX ]*100, 4);
 olimericDistribution = X_all;
-olimericDistributionTable = array2table(X_all, "RowNames", row_names, "VariableNames", "x_n");
+olimericDistributionTable = array2table(X_all, "RowNames", row_names, "VariableNames", ["x_n", "nonNegX_n"]);
 
 end

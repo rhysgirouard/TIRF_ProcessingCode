@@ -39,7 +39,7 @@ distributionTitles = [NaN, {'Monomers'}, {'Dimers'}, {'Trimers'},...
     {'Tetramers'}, {'Pentamers'}, {'Hexamers'}, {'Heptamers'},...
     {'Octamers'}, {'Nonamers'}];
 [oligomericDistribtution, ~] = oligomer_distribution_calculation_Fxn(fractions( 1 : ( end - 1 ) ), maturationEfficiency);
-oligomericDistribtution = [{'Fractions'}, num2cell(transpose(oligomericDistribtution))];
+oligomericDistribtution = [[{'Fractions'};{'NonNegative Fractions'}], num2cell(transpose(oligomericDistribtution))];
 result = [columnTitles; sumAsCell; totalRow; fractionsAsCell; emptyRow; distributionTitles; oligomericDistribtution];
 writecell(result,fullfile(sampleFolderPath, 'sumOfCounts.xlsx'))
 disp(['Total Counted: ', num2str(totalCounted)])
