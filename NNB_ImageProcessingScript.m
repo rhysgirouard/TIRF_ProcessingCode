@@ -102,7 +102,7 @@ for i = 1:numel(filenames)
     imageName = extractBefore(currentfilename, '.nd2');
     subFolderPath = fullfile(results_folder, imageName);
     set(figures(i), 'visible', 'on');
-    figFilePath = fullfile(subFolderPath, 'interactiveFig');
+    figFilePath = fullfile(subFolderPath, 'interactiveFig.fig');
     savefig(figures(i), figFilePath)
     close(figures(i))
 end
