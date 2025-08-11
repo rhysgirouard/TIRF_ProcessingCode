@@ -61,15 +61,30 @@ function [traceData] = prepareFolderForFigureCreation(tifFolderPath, OriginalSta
 
     %sort by x-coord so that resulting figure is deterministic unless the
     %figure has previously been created.
-    if ~isfile(fullfile(tifFolderPath,'interactiveFig.fig'))
+    spotInfoPath = fullfile(tifFolderPath, 'SpotInfoData.csv');
+    if ~isfile(spotInfoPath)
         [~, sortedIndicies] = sort(spot_info(:,2));
         spot_info = spot_info(sortedIndicies,:);
         avg_intensity_survival = avg_intensity_survival(:,sortedIndicies);
+    else
+        oldSpotData = readmatrix(spotInfoPath);
+        oldSortedLocations = sortrows(oldSpotData(2:3));
+        newSpotLocations = spot_info(2:3);
+        newSortedLocations = sortrows(newSpotLocations);
+        if isequal(oldSortedLocations, newSortedLocations)
+            [~, idx] = ismember(oldSpotData(2:3), newSpotLocations, 'rows');
+            spot_info = spot_info(idx, :);
+        else
+            [~, sortedIndicies] = sort(spot_info(:,2));
+            spot_info = spot_info(sortedIndicies,:);
+            avg_intensity_survival = avg_intensity_survival(:,sortedIndicies);
+        end
+
     end
 
     % Save the trace data into a csv
     writematrix(avg_intensity_survival,fullfile(tifFolderPath, 'AvgIntesnitySurvivalData.csv'))
-    writematrix(spot_info,fullfile(tifFolderPath, 'SpotInfoData.csv'))
+    writematrix(spot_info,spotInfoPath)
     traceData = avg_intensity_survival;
 
 end
