@@ -208,6 +208,11 @@ function plotWithText(yVals, traceNum, info, txt, withOverlay)
     yL=ylim;
     if info(4) == 0
         title(['Trace #', num2str(traceNum)])
+    elseif size(info,2) == 5 && info(5) ~= 0
+        title({['Trace #', num2str(traceNum), ' | Quality: ', num2str(info(4))];...
+        ['x: ', num2str(info(2)), ' y: ', num2str(info(3))]})
+        text(0.5*(xL(1)+xL(2)),0.5*(yL(1)+yL(2)), ["Possible"; "Bad Spot!"], 'HorizontalAlignment','center',...
+        'VerticalAlignment','middle', 'FontSize', 80, 'Color', [1, 0, 0, 0])
     else
         title({['Trace #', num2str(traceNum), ' | Quality: ', num2str(info(4))];...
         ['x: ', num2str(info(2)), ' y: ', num2str(info(3))]})
