@@ -39,11 +39,11 @@ distributionTitles = [NaN, {'Monomers'}, {'Dimers'}, {'Trimers'},...
     {'Tetramers'}, {'Pentamers'}, {'Hexamers'}, {'Heptamers'},...
     {'Octamers'}, {'Nonamers'}];
 [oligomericDistribtution, ~] = oligomer_distribution_calculation_Fxn(fractions( 1 : ( end - 1 ) ), maturationEfficiency);
-oligomericDistribtution1 = [[{num2str(maturationEfficiency) 'mat eff'};{num2str(maturationEfficiency) 'mat eff(non neg)'}], num2cell(transpose(oligomericDistribtution))];
+oligomericDistribtution1 = [[{strcat(num2str(maturationEfficiency), ' maturation efficiency')};{strcat(num2str(maturationEfficiency), ' maturation efficiency(non neg)')}], num2cell(transpose(oligomericDistribtution))];
 [oligomericDistribtution, ~] = oligomer_distribution_calculation_Fxn(fractions( 1 : ( end - 1 ) ), maturationEfficiency+0.05);
-oligomericDistribtution2 = [[{num2str(maturationEfficiency+0.05) 'mat eff'};{num2str(maturationEfficiency+0.05) 'mat eff(non neg)'}], num2cell(transpose(oligomericDistribtution))];
+oligomericDistribtution2 = [[{strcat(num2str(maturationEfficiency+0.05), ' maturation efficiency')};{strcat(num2str(maturationEfficiency+0.05), ' maturation efficiency(non neg)')}], num2cell(transpose(oligomericDistribtution))];
 [oligomericDistribtution, ~] = oligomer_distribution_calculation_Fxn(fractions( 1 : ( end - 1 ) ), maturationEfficiency+0.1);
-oligomericDistribtution3 = [[{num2str(maturationEfficiency+0.1) 'mat eff'};{num2str(maturationEfficiency+0.1) 'mat eff(non neg)'}], num2cell(transpose(oligomericDistribtution))];
+oligomericDistribtution3 = [[{strcat(num2str(maturationEfficiency+0.1) ,' maturation efficiency')};{strcat(num2str(maturationEfficiency+0.1), ' maturation efficiency(non neg)')}], num2cell(transpose(oligomericDistribtution))];
 
 result = [columnTitles; sumAsCell; totalRow; fractionsAsCell; emptyRow; distributionTitles; oligomericDistribtution1; oligomericDistribtution2; oligomericDistribtution3];
 writecell(result,fullfile(sampleFolderPath, 'sumOfCounts.xlsx'))
