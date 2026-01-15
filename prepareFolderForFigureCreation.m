@@ -6,20 +6,28 @@ function [traceData] = prepareFolderForFigureCreation(tifFolderPath, OriginalSta
 %   generation
 
     [mImage, nImage, NumberImages] = size(OriginalStack);
-
-
-    tracks_file = fullfile(tifFolderPath,'Track statistics.csv');
-    [tracks_data, ~]= readtext(tracks_file, '[,\t]', '=', '[]', 'numeric-empty2zero');
-    [tracks_text_data, ~]= readtext(tracks_file, '[,\t]', '=', '[]', 'textual');
-    tracks_firstrow = tracks_text_data(1,:);
-    track_x_location_index = find(ismember(tracks_firstrow,'TRACK_X_LOCATION'));
-    track_y_location_index = find(ismember(tracks_firstrow,'TRACK_Y_LOCATION'));
-    xy_coordinates(:,1) = tracks_data(2:end,track_x_location_index);
-    xy_coordinates(:,2) = tracks_data(2:end,track_y_location_index);
-    xy_coordinates = round(xy_coordinates);
     
-    quality_indices = ismember(tracks_firstrow, 'TRACK_MEAN_QUALITY');
-    xy_coordinates(:,3) = tracks_data(2:end, quality_indices);
+
+    trackmateData = fullfile(tifFolderPath, 'TrackmateData.xml');
+    tracks_file = fullfile(tifFolderPath,'Track statistics.csv');
+    if isfile(trackmateData)
+        tracks_struct = readstruct(trackmateData);
+        xy_coordinates(:,1) = [tracks_struct.Model.AllTracks.Track.TRACK_X_LOCATIONAttribute];
+        xy_coordinates(:,2) = [tracks_struct.Model.AllTracks.Track.TRACK_Y_LOCATIONAttribute];
+        xy_coordinates(:,3) = [tracks_struct.Model.AllTracks.Track.TRACK_MEAN_QUALITYAttribute];
+    elseif isfile (tracks_file)
+
+        [tracks_data, ~]= readtext(tracks_file, '[,\t]', '=', '[]', 'numeric-empty2zero');
+        [tracks_text_data, ~]= readtext(tracks_file, '[,\t]', '=', '[]', 'textual');
+        tracks_firstrow = tracks_text_data(1,:);
+        track_x_location_index = find(ismember(tracks_firstrow,'TRACK_X_LOCATION'));
+        track_y_location_index = find(ismember(tracks_firstrow,'TRACK_Y_LOCATION'));
+        xy_coordinates(:,1) = tracks_data(2:end,track_x_location_index);
+        xy_coordinates(:,2) = tracks_data(2:end,track_y_location_index);
+        quality_indices = ismember(tracks_firstrow, 'TRACK_MEAN_QUALITY');
+        xy_coordinates(:,3) = tracks_data(2:end, quality_indices);
+    end
+    xy_coordinates = round(xy_coordinates);
     
     % Define 5x5 roi centered at each particle coordinate
     roi_size = 5; % in pixels 
