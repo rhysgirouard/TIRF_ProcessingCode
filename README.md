@@ -1,63 +1,66 @@
-README
+# README
 
 This app will process a folder of .nd2 image stacks acquired on a TIRF microscope and generate statistics and figures for classifying step photobleaching. The app will identify individual spots and create figures that report fluorescence intensity over time and allow manual classification by keypress.
 
-Requirements:
-Fiji and MATLAB
-developed on Fiji 2.14.0/1.54f and MATLAB 2023b and the associate Image Processing toolbox
+Requirements: Fiji and MATLAB
 
-## H2 INSTRUCTIONS:
+Developed on: Fiji 2.14.0/1.54f and MATLAB 2023b and the associated Image Processing toolbox
 
-### H3 I. For the first time only:
+## INSTRUCTIONS:
+
+### I. For the first time only:
 
 1. Download the NNB_GUI.mlappinstall file from this GitHub
 
 2. run the NNB_GUI.mlappinstall file
 
-3. Add ImageJ-MATLAB to the your update site list in Fiji.(full instructions with pictures here: https://imagej.net/update-sites/following) 
-	a. Help>Update...
-	b. after fiji is updated in the ImageJ updater window select 'Manage Update Sites"
-	c. check the box next to the ImageJ-MATLAB site (use the search bar to find it faster)
-	d. Select add update site
-	d. Select Apply Changes
-	e. restart Fiji
-4. Add Image Processing Toolbox to MATLAB
+3. Add ImageJ-MATLAB to the your update site list in Fiji.(full instructions with pictures here: https://imagej.net/update-sites/following)
+   1. Help>Update...
+   2. After fiji is updated in the ImageJ updater window select 'Manage Update Sites"
+   3. Check the box next to the ImageJ-MATLAB site (use the search bar to find it faster)
+   4. Select add update site
+   5. Select Apply Changes
+   6. Restart Fiji
 
-5. Use the app menu at the top to open NNB_GUI
+5. Add Image Processing Toolbox to MATLAB
 
-6. Use the Select File button to select the location of your Fiji installation (On Mac this is the Fiji app on Windows this should be the ImageJ exe)
+6. Use the app menu at the top to open NNB_GUI
 
-7. Select the correct file type and channel. Leave other settings as is.
+7. Use the Select File button to select the location of your Fiji installation (On Mac this is the Fiji app on Windows this should be the ImageJ exe)
 
-8. Follow below instructions (part II) to determine best spot size and quality.
+8. Select the correct file type and channel. Leave other settings as is.
 
-
-### H3 II. For each new imaging configuration
-
-Since different microscope configurations will result in varied image specifications it is suggested that you determine the spot size and quality threshold for your data. You can do this by manually using trackMate on a representative acquisition. Lower quality thresholds are more likely to pick up background noise and auto fluorescent dust etc. The defaults are a spot radius of 3 pixels and a quality of 50. You can determine what works best for you by previewing spot tracking in a manual Trackmate run. All data should be processed with the same settings. The best way to test this is as follows:
-	1. Place a representative image stack acquisition in its own folder
-	2. Open MATLAB
-	3. Use the app menu at the top to open NNB_GUI and follow instructions in section IV. to process your single stack folder
-	4. In Fiji, open the file titled First3Frames.tif created in the sub-subfolder of the Results folder 
-	5. In the menubar go to Plugins>Tracking>Trackmate
-	6. In the Z/T Swapped popup select 'Yes'
-	7. Click Next without changing calibration or crop settings
-	8. Select DoG detector 
-	9. Activate 'Pre-process with median filter' and 'Sub-pixel localization'
-	10. Try different object diameters and quality thresholds and use Preview to see what is circled
-	l. repeat until you get settings where all spots are circled and no background noise is selected. 
-	m. Note down the quality and diameter that worked best(NOTE: the code asks for RADIUS so divide diameter by two)
-	n. Run NNB_Settings and answer popups
-	o. Proceed with counting.	
+9. Follow below instructions (part II) to determine best spot size and quality.
 
 
-### H3 III. Before you run the code:
+### II. For each new imaging configuration
+
+Since different microscope configurations will result in varied image specifications it is suggested that you determine the spot size and quality threshold for your data. You can do this by manually using trackMate on a representative acquisition. Lower quality thresholds are more likely to pick up background noise and auto fluorescent dust etc. The defaults are a spot radius of 3 pixels and a quality of 50. You can determine what works best for you by previewing spot tracking in a manual Trackmate run. All data should be processed with the same settings. The best way to test this is as follows
+
+1. Place a representative image stack acquisition in its own folder
+   
+3. Open MATLAB
+4. Use the app menu at the top to open NNB_GUI and follow instructions in section IV. to process your single stack folder
+5. In Fiji, open the file titled First3Frames.tif created in the sub-subfolder of the Results folder 
+6. In the menubar go to Plugins>Tracking>Trackmate
+7. In the Z/T Swapped popup select 'Yes'
+8. Click Next without changing calibration or crop settings
+9. Select DoG detector 
+10. Activate 'Pre-process with median filter' and 'Sub-pixel localization'
+11. Try different object diameters and quality thresholds and use Preview to see what is circled
+12. repeat until you get settings where all spots are circled and no background noise is selected. 
+13. Note down the quality and diameter that worked best(NOTE: the code asks for RADIUS so divide diameter by two)
+14. Run NNB_Settings and answer popups
+15. Proceed with counting.	
+
+
+### III. Before you run the code:
 
 1. Move the three channel image stacks to a separate folder. They confuse the code(these can be put back after figures have been generated)
 2. The code processes all the files in the folder together and so will finish with all the images at the same time. If desired separate your image stacks and process in chunks. 
 
 
-### H3 IV. Every time you run the code:
+### IV. Every time you run the code:
 
 1. Open the NNB_GUI app from the app section of the MATLAB menu bar
 
@@ -83,7 +86,7 @@ If the app is failing it may be easier to use/debug the script(NNB_ImageProcessi
 3. Wait for the program to finish in the background. When figures are being saved at the very end MATLAB will briefly steal focus.
 
 
-### H3 V. Annotate traces
+### V. After you run the code (Annotate traces)
 
 1. Group the image folders in results by sample conditions
 
@@ -105,7 +108,7 @@ If the app is failing it may be easier to use/debug the script(NNB_ImageProcessi
 
 9. View results saved in the sumOfCounts.xlsx file
 
-TroubleShooting:
+### TroubleShooting:
 Common Errors:
 1. [WARNING] Could not set Look & Feel ''
 	You can safely ignore this warning
