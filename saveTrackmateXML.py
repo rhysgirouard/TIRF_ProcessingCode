@@ -42,8 +42,6 @@ channel = int(channel)
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-folderPath = "/Users/rhysg/Downloads/mNGat2percentlaser power/Results/mNG-F13-2mV-pb2-80-0008"
-imagePath = "/Users/rhysg/Downloads/mNGat2percentlaser power/Results/mNG-F13-2mV-pb2-80-0008/First3frames.tif"
 imp = IJ.openImage(imagePath)
 
 #Check whether you need to swap Z and T 
@@ -67,9 +65,9 @@ settings = Settings(imp)
 settings.detectorFactory = DogDetectorFactory()
 settings.detectorSettings = {
     'DO_SUBPIXEL_LOCALIZATION' : True,
-    'RADIUS' : 3.,
-    'TARGET_CHANNEL' : 1,
-    'THRESHOLD' : 20.,
+    'RADIUS' : radius,
+    'TARGET_CHANNEL' : channel,
+    'THRESHOLD' : quality,
     'DO_MEDIAN_FILTERING' : True,
 }  
 # Configure tracker - We want to allow merges and fusions

@@ -1,14 +1,11 @@
 function saveTrackXML(fijiPath, appPath, imagePath, folderPath, spotRadius, qualityThreshold, channel)
 
-
-if ismac()
-    executablePath = fullfile(fijiPath, "Contents/MacOS/ImageJ-macosx");
-    if ~isfile(executablePath)
-        error("Could not locate ImageJ path for scripting")
-    end
+if ~isfile(fijiPath)
+    error("Could not locate ImageJ path for scripting")
 end
 
 scriptPath = fullfile(appPath, "saveTrackmateXML.py");
+
 
 image = "'" + imagePath + "'";
 folder = "'" + folderPath + "'";
@@ -18,8 +15,14 @@ channel = num2str(channel);
 
 args = sprintf("imagePath=%s,folderPath=%s,radius=%s,quality=%s,channel=%s",...
     image, folder, radius, quality, channel);
-cmd = sprintf('"%s" --headless --run "%s" "%s"', executablePath, scriptPath, args);
-
+if ismac()
+    cmd = sprintf('"%s" --headless --run "%s" "%s"', executablePath, scriptPath, args);
+elseif ispc()
+    cmd = sprintf('%s --headless --console --run "%s" "%s"', executablePath, scriptPath, args);
+else
+    warning("WARNING! unsupported OS")
+    cmd = sprintf('"%s" --headless --run "%s" "%s"', executablePath, scriptPath, args);
+end
 status = system(cmd);
 
 if status ~= 0
