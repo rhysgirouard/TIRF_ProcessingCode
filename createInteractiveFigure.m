@@ -4,12 +4,13 @@ function createInteractiveFigure(folderPath, currentFigure, maturationEfficiency
 %   by prepareFolderForFigureCreation to create a figure containg all the traces
 %   from the folder tif that can be covieniently labeled and zoomed
 
-spotInfoSaved = false;
-[NumFrames, numTraces]  = size(subtractedTraceData);
+% Check for spot info
+[~, numTraces]  = size(subtractedTraceData);
 spot_info = zeros(numTraces,4);
 if isfile(fullfile(folderPath, 'SpotInfoData.csv'))
-    spotInfoSaved = true;
     spot_info = readmatrix(fullfile(folderPath, 'SpotInfoData.csv'));
+else
+    warning('No SpotInfoData.csv Found')
 end
 
 set(0,'CurrentFigure',currentFigure)
@@ -63,11 +64,18 @@ end
 
 function updatePlot(src, event, sliderHandle, rawData, maturationEfficiency, spot_info)
 %updatePlot updates the figure(src) based on the  key pressed  
+% plots saved brightness over time data for each identified spot. Key
+% presses allow the user to control the figure. Number keys assign a
+% classification to the current trace, left and right arrows move through 
+% the traces, up and down arrows zoom x-axis, a s d f use fixed zoom
+% windows, q saves and closes the figure calculating a oligomeric state
+% based on currently counted data. 
 
-%Read in the array to track the step IDs
+    %Read in the array to track the step IDs
     data = guidata(src);
     [folderPath, ~, ~] = fileparts(src.FileName);
     
+    % This is for checking differnet older versions that used less inputs
     if nargin < 6
         if isfield(data, 'info')
             spot_info = data.info;
@@ -95,13 +103,11 @@ function updatePlot(src, event, sliderHandle, rawData, maturationEfficiency, spo
             data.info = spot_info;
             guidata(src, data)
         else
-        [numFrames, numTraces]  = size(rawData);
+        [~, numTraces]  = size(rawData);
         spot_info = zeros(numTraces,4);
         end
     end
     
-    %spot_info = zeros(numTraces,4);
-
     % Get the key that was pressed
     keyPressed = event.Key;
     %check the current trace index
@@ -174,6 +180,12 @@ function updatePlot(src, event, sliderHandle, rawData, maturationEfficiency, spo
     end
 
     if isempty(event.Modifier)
+        % Check if the current trace is a flagged spot
+        info = spot_info(sliderHandle.Value, :);
+        while size(info,2) == 5 && info(5) ~= 0
+            sliderHandle.Value = sliderHandle.Value + 1;
+            info = spot_info(sliderHandle.Value, :);
+        end
         txt = num2str(data.pressedNums(sliderHandle.Value));
         info = spot_info(sliderHandle.Value, :);
         plotWithText(rawData(1:newLim, sliderHandle.Value), sliderHandle.Value, info, txt, false);
