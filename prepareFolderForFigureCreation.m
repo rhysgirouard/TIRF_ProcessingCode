@@ -8,24 +8,31 @@ function [traceData] = prepareFolderForFigureCreation(tifFolderPath, OriginalSta
     [mImage, nImage, NumberImages] = size(OriginalStack);
     
 
-    trackmateData = fullfile(tifFolderPath, 'TrackmateData.xml');
-    tracks_file = fullfile(tifFolderPath,'Track statistics.csv');
-    if isfile(trackmateData)
-        tracks_struct = readstruct(trackmateData);
+    tracks_xml = fullfile(tifFolderPath, 'TrackmateData.xml');
+    tracks_csv = fullfile(tifFolderPath,'Track statistics.csv');
+    if isfile(tracks_xml)
+        tracks_struct = readstruct( tracks_xml );
+        numberOfSpots = size( [ tracks_struct.Model.AllTracks.Track.TRACK_X_LOCATIONAttribute ], 2 );
+        xy_coordinates = NaN( numberOfSpots, 3 );
         xy_coordinates(:,1) = [tracks_struct.Model.AllTracks.Track.TRACK_X_LOCATIONAttribute];
         xy_coordinates(:,2) = [tracks_struct.Model.AllTracks.Track.TRACK_Y_LOCATIONAttribute];
         xy_coordinates(:,3) = [tracks_struct.Model.AllTracks.Track.TRACK_MEAN_QUALITYAttribute];
-    elseif isfile (tracks_file)
 
-        [tracks_data, ~]= readtext(tracks_file, '[,\t]', '=', '[]', 'numeric-empty2zero');
-        [tracks_text_data, ~]= readtext(tracks_file, '[,\t]', '=', '[]', 'textual');
+    elseif isfile (tracks_csv)
+
+        [tracks_data, ~]= readtext(tracks_csv, '[,\t]', '=', '[]', 'numeric-empty2zero');
+        [tracks_text_data, ~]= readtext(tracks_csv, '[,\t]', '=', '[]', 'textual');
         tracks_firstrow = tracks_text_data(1,:);
         track_x_location_index = find(ismember(tracks_firstrow,'TRACK_X_LOCATION'));
         track_y_location_index = find(ismember(tracks_firstrow,'TRACK_Y_LOCATION'));
+        numberOfSpots = size(tracks_data, 1);
+        xy_coordinates = NaN( numberOfSpots, 3 );
         xy_coordinates(:,1) = tracks_data(2:end,track_x_location_index);
         xy_coordinates(:,2) = tracks_data(2:end,track_y_location_index);
         quality_indices = ismember(tracks_firstrow, 'TRACK_MEAN_QUALITY');
         xy_coordinates(:,3) = tracks_data(2:end, quality_indices);
+    else
+        error("No Trackmate Results detected!")
     end
     xy_coordinates = round(xy_coordinates);
     
