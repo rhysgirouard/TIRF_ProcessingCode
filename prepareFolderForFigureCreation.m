@@ -1,4 +1,4 @@
-function [traceData] = prepareFolderForFigureCreation(tifFolderPath, OriginalStack)
+function [traceData, spot_info] = prepareFolderForFigureCreation(tifFolderPath, OriginalStack)
 %prepareFolderForFigureCreation prepares a folder for figure generation
 %   takes a folderpath to a folder that has been prepared with an
 %   OriginalStack.mat and TrackStatistics.csv and generates the arrays
@@ -34,17 +34,17 @@ function [traceData] = prepareFolderForFigureCreation(tifFolderPath, OriginalSta
     else
         error("No Trackmate Results detected!")
     end
-    xy_coordinates = round(xy_coordinates);
+    xy_coordinates_integer = round(xy_coordinates);
     
     % Define 5x5 roi centered at each particle coordinate
     roi_size = 5; % in pixels 
-    n_particle = size(xy_coordinates,1);
+    n_particle = size(xy_coordinates_integer,1);
     roi_left_edge = zeros(1,n_particle);
     roi_top_edge = zeros(1,n_particle);    
     % define edge of roi for each particle
     for spotNum=1:n_particle
-        roi_left_edge(spotNum) = xy_coordinates(spotNum,1)-((roi_size-1)/2)+1; % pixel value start at 0 but matlab start at 1.
-        roi_top_edge(spotNum) = xy_coordinates(spotNum,2)-((roi_size-1)/2)+1;
+        roi_left_edge(spotNum) = xy_coordinates_integer(spotNum,1)-((roi_size-1)/2)+1; % pixel value start at 0 but matlab start at 1.
+        roi_top_edge(spotNum) = xy_coordinates_integer(spotNum,2)-((roi_size-1)/2)+1;
     end
     
     % acquire avg and max intensity of each particle in every frame
@@ -54,7 +54,7 @@ function [traceData] = prepareFolderForFigureCreation(tifFolderPath, OriginalSta
     rois = cell(n_particle, 1);
     max_intensity = zeros(NumberImages,n_particle);
     avg_intensity_survival = zeros(NumberImages,n_particle);
-    spot_info = zeros(n_particle,4);
+    spot_info = zeros(n_particle,5);
     spot_info(:,1) = 1:n_particle;
     filteredIndex = 1;
 

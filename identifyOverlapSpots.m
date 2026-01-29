@@ -1,4 +1,4 @@
-function [exclusionTags] = identifyOverlapSpots(folderPath, innerWindowSize, outerWindowSize, brightnessThreshold, distanceThreshold)
+function [spot_info] = identifyOverlapSpots(spot_info, ZProjection, innerWindowSize, outerWindowSize, brightnessThreshold, distanceThreshold)
 %identifyOverlapSpots identifies doubled or overlapping spots
 %   Looks at the image to see if TrackMate has chosen spots that are either
 %   too close to each other or large enough that they are likely two
@@ -8,11 +8,9 @@ function [exclusionTags] = identifyOverlapSpots(folderPath, innerWindowSize, out
 %   0.328 and 4.5 respectively. window sizes are chosen to fit average spot
 %   size
 
-% Import spot locations
-dataPath = fullfile(folderPath, "SpotInfoData.csv");
-data = readmatrix(dataPath);
-points = data(:,2:3);
-numPoints = length(points);
+xy_coordinates = spot_info(:,2:3);
+xy_coordinates_integer = round(xy_coordinates);
+numPoints = length(xy_coordinates);
 
 % Compute pairwise distances 
 distances = inf(numPoints);
@@ -20,7 +18,7 @@ distancefun = @(a, b) sqrt( ( a(1) - b(1) )^2 + ( a(2) - b(2) )^2 );
 
 for index1 = 1:numPoints
     for index2 = index1:numPoints
-        distances(index1,index2) = distancefun(points(index1,:), points(index2,:));
+        distances(index1,index2) = distancefun(xy_coordinates(index1,:), xy_coordinates(index2,:));
         distances(index2,index1) = distances(index1,index2);
     end
 end
@@ -33,12 +31,10 @@ nearest_distances = min(distances, [], 2);
 
 % Import image and adjust contrast (must be 0 to 1 for other code to function
 % properly also helps if you want to visualize with imshow()
-imagePath = fullfile(folderPath, "First3frames.tif");
-rawImage = imread(imagePath);
-rawImage = cast(rawImage, 'double');
-minVal = min(rawImage, [], "all");
-maxVal = max(rawImage, [], "all");
-adjustedImage = (rawImage-minVal)./(maxVal-minVal);
+ZProjection = cast(ZProjection, 'double');
+minVal = min(ZProjection, [], "all");
+maxVal = max(ZProjection, [], "all");
+adjustedImage = (ZProjection-minVal)./(maxVal-minVal);
 
 % in order to remove dependence on Image Processing toolbox while
 % maintining consistent parameters imadjust must be manually replicated
@@ -54,11 +50,11 @@ autoImage = (adjustedImage - ilow) ./ (ihigh - ilow);
 % brightness
 maskedImage = autoImage;
 halfInnerWindow = (innerWindowSize - 1) / 2;
-[rows, cols] = size(rawImage);
+[rows, cols] = size(ZProjection);
 
  for i = 1:numPoints
-    x = points(i,1); % column
-    y = points(i,2); % row
+    x = xy_coordinates_integer(i,1); % column
+    y = xy_coordinates_integer(i,2); % row
 
     % Define inner window bounds
     xStart = max(x - halfInnerWindow + 1, 1);
@@ -77,8 +73,8 @@ halfInnerWindow = (innerWindowSize - 1) / 2;
  nearbyBrightness = zeros(numPoints, 1);
  halfOuterWindow = (outerWindowSize - 1) / 2;
  for i = 1:numPoints
-    x = points(i,1); % column
-    y = points(i,2); % row
+    x = xy_coordinates_integer(i,1); % column
+    y = xy_coordinates_integer(i,2); % row
 
     % Define outer window bounds
     xStart = max(x - halfOuterWindow + 1, 1);
@@ -101,7 +97,6 @@ exclusionTags = zeros(numPoints,1);
 exclusionTags(nearest_distances < distanceThreshold) = exclusionTags(nearest_distances < distanceThreshold) + 1;
 exclusionTags(nearbyBrightness > brightnessThreshold) = exclusionTags(nearbyBrightness > brightnessThreshold) + 2;
 
-updatedData = [data exclusionTags];
-writematrix(updatedData, dataPath)
+spot_info(:,5) = exclusionTags;
 
 end

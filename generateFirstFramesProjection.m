@@ -1,4 +1,4 @@
-function [OutputFilePath] = generateFirstFramesProjection(folderPath, firstFrames)
+function [OutputFilePath, ZProjection] = generateFirstFramesProjection(folderPath, firstFrames)
 %generateFirstFramesProjection generates a Z-projection for tracking
 %   Sums the first 3 frames together to create a background "averaged" 
 %   image for use in tracking. The image for tracking needs to have 
