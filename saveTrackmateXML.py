@@ -17,16 +17,7 @@ from fiji.plugin.trackmate import Logger
 from fiji.plugin.trackmate.detection import DogDetectorFactory
 from fiji.plugin.trackmate.tracking.kdtree import NearestNeighborTrackerFactory
 
-# from fiji.plugin.trackmate.gui.displaysettings import DisplaySettingsIO
-from fiji.plugin.trackmate.gui.displaysettings import DisplaySettings
-
-import fiji.plugin.trackmate.visualization.hyperstack.HyperStackDisplayer as HyperStackDisplayer
-import fiji.plugin.trackmate.features.FeatureFilter as FeatureFilter
-
 from fiji.plugin.trackmate.io import TmXmlWriter
-
-from fiji.plugin.trackmate.visualization.table import TrackTableView
-from fiji.plugin.trackmate.visualization.table import AllSpotsTableView
 
 #@ String imagePath
 #@ String folderPath
@@ -103,9 +94,8 @@ if not ok:
 # Save XML
 #----------------
 
-# Create default SelectionModel and DisplaySettings
+# Create default SelectionModel
 sm = SelectionModel(model)
-ds = DisplaySettings()
 
 target_xml_filename = os.path.join(folderPath, 'TrackmateData.xml')
 target_xml_file = java.io.File( target_xml_filename )
@@ -114,7 +104,6 @@ writer = TmXmlWriter( target_xml_file, Logger.IJ_LOGGER )
 # Append content. Only the model is mandatory.
 writer.appendModel( model )
 writer.appendSettings( settings )
-writer.appendDisplaySettings( ds )
 
 # Actually write the file.
 writer.writeToFile()

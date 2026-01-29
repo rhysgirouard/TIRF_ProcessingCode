@@ -1,4 +1,4 @@
-function [traceData, spot_info] = prepareFolderForFigureCreation(tifFolderPath, OriginalStack)
+function [spot_info] = prepareFolderForFigureCreation(tracks_struct, OriginalStack)
 %prepareFolderForFigureCreation prepares a folder for figure generation
 %   takes a folderpath to a folder that has been prepared with an
 %   OriginalStack.mat and TrackStatistics.csv and generates the arrays
@@ -7,33 +7,13 @@ function [traceData, spot_info] = prepareFolderForFigureCreation(tifFolderPath, 
 
     [mImage, nImage, NumberImages] = size(OriginalStack);
     
+    numberOfSpots = size( [ tracks_struct.Model.AllTracks.Track.TRACK_X_LOCATIONAttribute ], 2 );
+    xy_coordinates = NaN( numberOfSpots, 3 );
+    xy_coordinates(:,1) = [tracks_struct.Model.AllTracks.Track.TRACK_X_LOCATIONAttribute];
+    xy_coordinates(:,2) = [tracks_struct.Model.AllTracks.Track.TRACK_Y_LOCATIONAttribute];
+    xy_coordinates(:,3) = [tracks_struct.Model.AllTracks.Track.TRACK_MEAN_QUALITYAttribute];
 
-    tracks_xml = fullfile(tifFolderPath, 'TrackmateData.xml');
-    tracks_csv = fullfile(tifFolderPath,'Track statistics.csv');
-    if isfile(tracks_xml)
-        tracks_struct = readstruct( tracks_xml );
-        numberOfSpots = size( [ tracks_struct.Model.AllTracks.Track.TRACK_X_LOCATIONAttribute ], 2 );
-        xy_coordinates = NaN( numberOfSpots, 3 );
-        xy_coordinates(:,1) = [tracks_struct.Model.AllTracks.Track.TRACK_X_LOCATIONAttribute];
-        xy_coordinates(:,2) = [tracks_struct.Model.AllTracks.Track.TRACK_Y_LOCATIONAttribute];
-        xy_coordinates(:,3) = [tracks_struct.Model.AllTracks.Track.TRACK_MEAN_QUALITYAttribute];
 
-    elseif isfile (tracks_csv)
-
-        [tracks_data, ~]= readtext(tracks_csv, '[,\t]', '=', '[]', 'numeric-empty2zero');
-        [tracks_text_data, ~]= readtext(tracks_csv, '[,\t]', '=', '[]', 'textual');
-        tracks_firstrow = tracks_text_data(1,:);
-        track_x_location_index = find(ismember(tracks_firstrow,'TRACK_X_LOCATION'));
-        track_y_location_index = find(ismember(tracks_firstrow,'TRACK_Y_LOCATION'));
-        numberOfSpots = size(tracks_data, 1);
-        xy_coordinates = NaN( numberOfSpots, 3 );
-        xy_coordinates(:,1) = tracks_data(2:end,track_x_location_index);
-        xy_coordinates(:,2) = tracks_data(2:end,track_y_location_index);
-        quality_indices = ismember(tracks_firstrow, 'TRACK_MEAN_QUALITY');
-        xy_coordinates(:,3) = tracks_data(2:end, quality_indices);
-    else
-        error("No Trackmate Results detected!")
-    end
     xy_coordinates_integer = round(xy_coordinates);
     
     % Define 5x5 roi centered at each particle coordinate
@@ -53,9 +33,13 @@ function [traceData, spot_info] = prepareFolderForFigureCreation(tifFolderPath, 
     % intialize varaibles for the loop of the maximum possible size 
     rois = cell(n_particle, 1);
     max_intensity = zeros(NumberImages,n_particle);
-    avg_intensity_survival = zeros(NumberImages,n_particle);
-    spot_info = zeros(n_particle,5);
-    spot_info(:,1) = 1:n_particle;
+    traceData = zeros(NumberImages,n_particle);
+    tableSize = [n_particle,7];
+    variableNames = ["Trace_Number", "Trackmate_Number", "X-coordinate",...
+        "Y-coordinate", "Trackmate_quality", "Flag", "Trace_Data"];
+    variableTypes = ["double", "double", "double", "double", "double", "double", "cell"];
+    spot_info = table('Size', tableSize,'VariableTypes', variableTypes, 'VariableNames', variableNames);
+    spot_info.Trackmate_Number = transpose(1:n_particle);
     filteredIndex = 1;
 
 % filter out spots that are too close to the edge to get a full roi
@@ -63,43 +47,22 @@ function [traceData, spot_info] = prepareFolderForFigureCreation(tifFolderPath, 
             if roi_left_edge(spotNum)>=1 && roi_left_edge(spotNum)+roi_size-1<=nImage && roi_top_edge(spotNum)>=1 && roi_top_edge(spotNum)+roi_size-1<=mImage
                 rois{filteredIndex,1} = OriginalStack(roi_top_edge(spotNum):roi_top_edge(spotNum)+roi_size-1,roi_left_edge(spotNum):roi_left_edge(spotNum)+roi_size-1,1:NumberImages);
                 max_intensity(1:NumberImages, filteredIndex) = max(rois{filteredIndex},[],[1,2]); % max of each roi in each frame
-                avg_intensity_survival(1:NumberImages, filteredIndex) = mean(rois{filteredIndex},[1,2]); % mean of each roi in each frame
-                spot_info(filteredIndex,2:4) = xy_coordinates(spotNum,1:3);
+                spot_info.Trace_Data{filteredIndex} = mean(rois{filteredIndex},[1,2]); % mean of each roi in each frame
+                spot_info.Trackmate_quality(filteredIndex) = xy_coordinates(spotNum, 3);
+                spot_info.('X-coordinate')(filteredIndex) = xy_coordinates(spotNum, 1);
+                spot_info.('Y-coordinate')(filteredIndex) = xy_coordinates(spotNum, 2);
                 filteredIndex = filteredIndex + 1;
             end
     end
     
     % remove zeros from overallocation at initialization
-    avg_intensity_survival = avg_intensity_survival(:,1:filteredIndex-1);
     spot_info = spot_info(1:filteredIndex-1,:);
     
 
     %sort by x-coord so that resulting figure is deterministic unless the
     %figure has previously been created.
-    spotInfoPath = fullfile(tifFolderPath, 'SpotInfoData.csv');
-    if ~isfile(spotInfoPath)
-        [~, sortedIndicies] = sort(spot_info(:,2));
-        spot_info = spot_info(sortedIndicies,:);
-        avg_intensity_survival = avg_intensity_survival(:,sortedIndicies);
-    else
-        oldSpotData = readmatrix(spotInfoPath);
-        oldSortedLocations = sortrows(oldSpotData(2:3));
-        newSpotLocations = spot_info(2:3);
-        newSortedLocations = sortrows(newSpotLocations);
-        if isequal(oldSortedLocations, newSortedLocations)
-            [~, idx] = ismember(oldSpotData(2:3), newSpotLocations, 'rows');
-            spot_info = spot_info(idx, :);
-        else
-            [~, sortedIndicies] = sort(spot_info(:,2));
-            spot_info = spot_info(sortedIndicies,:);
-            avg_intensity_survival = avg_intensity_survival(:,sortedIndicies);
-        end
+    [~, sortedIndicies] = sort(spot_info.("X-coordinate"));
 
-    end
-
-    % Save the trace data into a csv
-    writematrix(avg_intensity_survival,fullfile(tifFolderPath, 'AvgIntesnitySurvivalData.csv'))
-    writematrix(spot_info,spotInfoPath)
-    traceData = avg_intensity_survival;
-
+    spot_info = spot_info(sortedIndicies,:);
+    spot_info.Trace_Number = transpose(1:filteredIndex-1);
 end

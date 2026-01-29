@@ -1,4 +1,4 @@
-function [nImage, NumberImages, correctedStack] = readInTimelapse(tifFilePath)
+function [nImage, NumberImages, correctedStack, background] = readInTimelapse(tifFilePath)
 %readInTimelapse  Loads in the image as a 3D uint16 array for future use 
 
 % Load image

@@ -8,7 +8,7 @@ function [spot_info] = identifyOverlapSpots(spot_info, ZProjection, innerWindowS
 %   0.328 and 4.5 respectively. window sizes are chosen to fit average spot
 %   size
 
-xy_coordinates = spot_info(:,2:3);
+xy_coordinates = [spot_info.("X-coordinate"), spot_info.("Y-coordinate")];
 xy_coordinates_integer = round(xy_coordinates);
 numPoints = length(xy_coordinates);
 
@@ -97,6 +97,6 @@ exclusionTags = zeros(numPoints,1);
 exclusionTags(nearest_distances < distanceThreshold) = exclusionTags(nearest_distances < distanceThreshold) + 1;
 exclusionTags(nearbyBrightness > brightnessThreshold) = exclusionTags(nearbyBrightness > brightnessThreshold) + 2;
 
-spot_info(:,5) = exclusionTags;
+spot_info.Flag = exclusionTags;
 
 end

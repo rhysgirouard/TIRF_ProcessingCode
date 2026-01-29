@@ -1,28 +1,22 @@
-function createInteractiveFigure(folderPath, currentFigure, maturationEfficiency, subtractedTraceData)
+function createInteractiveFigure(folderPath, currentFigure, maturationEfficiency, spot_info)
 %createInteractiveFigure generates an interactive figure for the folder
 %   Takes in a folderpath and uses the trace data generated
 %   by prepareFolderForFigureCreation to create a figure containg all the traces
 %   from the folder tif that can be covieniently labeled and zoomed
 
 % Check for spot info
-[~, numTraces]  = size(subtractedTraceData);
-spot_info = zeros(numTraces,4);
-if isfile(fullfile(folderPath, 'SpotInfoData.csv'))
-    spot_info = readmatrix(fullfile(folderPath, 'SpotInfoData.csv'));
-else
-    warning('No SpotInfoData.csv Found')
-end
+subtractedTraceData = squeeze(vertcat(spot_info.Trace_Data{:}));
 
 set(0,'CurrentFigure',currentFigure)
-plot(subtractedTraceData(:,1));
+plot(subtractedTraceData(1,:));
 slmin = 1;
-NumberOfTraces = size (subtractedTraceData,2);
+NumberOfTraces = size (subtractedTraceData,1);
 slmax = NumberOfTraces;
 hsl = uicontrol('Style','slider','Min',slmin,'Max',slmax,...
                  'SliderStep',[1 1]./(slmax-slmin),'Value',1,...
                  'Position',[20 0 200 20]);
 %  set(hsl,'Callback',@(hObject,eventdata) plot(moving_avr_intensity(:,round(get(hObject,'Value')))))
-   set(hsl,'Callback',@(hObject,eventdata) plot(subtractedTraceData(:,round(get(hObject,'Value')))))
+   set(hsl,'Callback',@(hObject,eventdata) plot(subtractedTraceData(round(get(hObject,'Value')), :)))
 %check if the figure has previously been created or not  
 if 0 == exist(fullfile(folderPath, 'interactiveFig.fig'), 'file')
     data.pressedNums = NaN(NumberOfTraces,1);
@@ -75,7 +69,7 @@ function updatePlot(src, event, sliderHandle, rawData, maturationEfficiency, spo
     data = guidata(src);
     [folderPath, ~, ~] = fileparts(src.FileName);
     
-    % This is for checking differnet older versions that used less inputs
+    % This is for checking different older versions that used less inputs
     if nargin < 6
         if isfield(data, 'info')
             spot_info = data.info;
@@ -113,8 +107,8 @@ function updatePlot(src, event, sliderHandle, rawData, maturationEfficiency, spo
     %check the current trace index
     sliderValue = round(get(sliderHandle, 'Value'));
                
-    numberOfTraces = size(rawData,2);
-    numberOfFrames = size(rawData,1);
+    numberOfTraces = size(rawData,1);
+    numberOfFrames = size(rawData,2);
     
     newLim = numberOfFrames;
 
@@ -130,7 +124,7 @@ function updatePlot(src, event, sliderHandle, rawData, maturationEfficiency, spo
                 guidata(src,data)
                 txt = num2str(data.pressedNums(sliderHandle.Value));
                 info = spot_info(sliderHandle.Value,:);
-                plotWithText(rawData(:, sliderHandle.Value), sliderHandle.Value, info, txt, true);
+                plotWithText(rawData(sliderHandle.Value, :), sliderHandle.Value, info, txt, true);
                 pause(0.20)
                 if sliderValue < numberOfTraces
                     sliderHandle.Value = sliderValue+1;
@@ -145,7 +139,7 @@ function updatePlot(src, event, sliderHandle, rawData, maturationEfficiency, spo
         case {'d'}
             newLim = 300;
         case {'f'}
-            newLim = size(rawData,1);
+            newLim = numberOfFrames;
         %Use the arrowkeys to move b/w graphs without updating the steps
         case 'leftarrow'
             if isnan(data.pressedNums(sliderValue)) 
@@ -182,13 +176,20 @@ function updatePlot(src, event, sliderHandle, rawData, maturationEfficiency, spo
     if isempty(event.Modifier)
         % Check if the current trace is a flagged spot
         info = spot_info(sliderHandle.Value, :);
-        while size(info,2) == 5 && info(5) ~= 0
-            sliderHandle.Value = sliderHandle.Value + 1;
-            info = spot_info(sliderHandle.Value, :);
+        if istable(info)
+            while info.Flag ~= 0
+                sliderHandle.Value = sliderHandle.Value + 1;
+                info = spot_info(sliderHandle.Value, :);
+            end
+        elseif size(info,2) == 5
+            while info(5) ~= 0
+                sliderHandle.Value = sliderHandle.Value + 1;
+                info = spot_info(sliderHandle.Value, :);
+            end
         end
         txt = num2str(data.pressedNums(sliderHandle.Value));
         info = spot_info(sliderHandle.Value, :);
-        plotWithText(rawData(1:newLim, sliderHandle.Value), sliderHandle.Value, info, txt, false);
+        plotWithText(rawData(sliderHandle.Value, 1:newLim), sliderHandle.Value, info, txt, false);
         guidata(src,data)
     end
 
@@ -218,13 +219,11 @@ function plotWithText(yVals, traceNum, info, txt, withOverlay)
     hold on;
     xL=xlim;
     yL=ylim;
-    if info(4) == 0
+    if istable(info)
+        title({['Trace #', num2str(traceNum)];...
+        ['x: ', num2str(info.("X-coordinate")), ' y: ', num2str(info.("Y-coordinate"))]})
+    elseif ~istable(info) && info(4) == 0
         title(['Trace #', num2str(traceNum)])
-    elseif size(info,2) == 5 && info(5) ~= 0
-        title({['Trace #', num2str(traceNum), ' | Quality: ', num2str(info(4))];...
-        ['x: ', num2str(info(2)), ' y: ', num2str(info(3))]})
-        text(0.5*(xL(1)+xL(2)),0.5*(yL(1)+yL(2)), ["Possible"; "Bad Spot!"], 'HorizontalAlignment','center',...
-        'VerticalAlignment','middle', 'FontSize', 80, 'Color', [1, 0, 0, 0])
     else
         title({['Trace #', num2str(traceNum), ' | Quality: ', num2str(info(4))];...
         ['x: ', num2str(info(2)), ' y: ', num2str(info(3))]})
